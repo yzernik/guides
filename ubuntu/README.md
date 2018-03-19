@@ -17,9 +17,7 @@ This server is set up without graphical user interface and is used remotely usin
 
 **Spoiler alert**: this is the goal of this guide, simply buying a Blockaccino.
 
-[![](..\raspibolt\images\00_blockaccino_goal.png)](https://vimeo.com/258395303)
-
-
+[![](../raspibolt/images/00_blockaccino_goal.png)](https://vimeo.com/258395303)
 
 Things on my todo list:
 
@@ -46,8 +44,6 @@ It's important to use the following software components:
 * **Lightning Network Daemon (LND)**
   LND is the first Lighting client ready for mainnet and is very well suited as a backend. Other implementations like Acinq Eclair and Blockstream c-lightning will also work in this setup.
 
-
-
 # Setting up the Ubuntu Server
 
 ### Write down your passwords
@@ -61,19 +57,13 @@ You will need several passwords and I find it easiest to write them all down in 
 [ D ] LND seed password (optional)
 ```
 
-
-
 We use Ubuntu 16.04.4 LTS. 
 
 https://www.ubuntu.com/download/server
 
 Download the image, flash it on your USB Stick or other preferred method and start your node with it. 
 
-
-
 \~~~ Work In Progress ~~~
-
-
 
 ### 4) Connecting to the network
 
