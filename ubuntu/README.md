@@ -112,7 +112,6 @@ $ shutdown -r now
 
 # update the operating system
 $ apt update
-# $ apt upgrade
 $ apt dist-upgrade
 $ apt install linux-image-xu3 
 # answer [y], then [no] (do not abort)
@@ -135,12 +134,6 @@ When using the Nano text editor, you can use the same keyboard shortcuts to save
 # change hostname (replace "odroid" with "thundroid" :)
 $ nano /etc/hostname
 $ nano /etc/hosts
-```
-
-```
-# TODO
-# disable Swap file (this would degrade the MicroSD card)
-# $ swapoff --all
 ```
 
 ```
@@ -211,10 +204,6 @@ $ nano /etc/fstab
 
 swapon -s
 ```
-
-
-
-
 
 ```
 # restart
@@ -292,44 +281,6 @@ You can now only login with “admin” or “root” and your SSH key. As you c
 
 Worst case scenario: you need to flash the MicroSD card and set up the system again, all important stuff is still on the harddrive.
 
-#### Optional: add Tor connectivity
-
-You can make your node accessible through the Tor network. Please check your configuration carefully and also check the [original article](https://medium.com/@meeDamian/bitcoin-through-tor-on-rbp3-12d38a1506f) of Damian Mee for additional details.
-
-```
-# add the following lines to the file sources.list
-$ sudo nano /etc/apt/sources.list
-deb http://deb.torproject.org/torproject.org xenial main
-deb-src http://deb.torproject.org/torproject.org xenial main
-```
-
-```
-# add the Tor signing key
-$ gpg --keyserver keys.gnupg.net --recv 886DDD89
-$ gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add -
-```
-
-```
-$  sudo apt install tor
-```
-
-```
-# configure Tor
-$  sudo nano /etc/tor/torrc
-```
-
-
-
-https://gist.github.com/Stadicus/baa5d4ee3ad75a17166e88437c83b4b3#file-torrc
-
-
-
-```
-$ sudo service tor@default restart
-$ sudo usermod -a -G debian-tor admin
-$ sudo usermod -a -G debian-tor bitcoin
-```
-
 ### 6½) Prettify your Thundroid
 
 The following is not exactly necessary, but I think still worth the effort. 🖖
@@ -352,33 +303,57 @@ $ sudo cp *.bash-completion /etc/bash_completion.d/
 
 #### Pimp the command line prompt
 
-You can prettify your command prompt for each user by enabling color output and setting a custom prompt. Use either the yellow or red user, not both.
+You can prettify your command prompt by enabling color output and setting a custom prompt. 
 
 ![img](images/pimp_your_command_line.png)  
 
 *I use the red prompt for user “admin”, and the yellow prompt for “bitcoin”.*
 
-
-
 ```
-# edit .bashrc with user "admin", use options from below.
-
 $ nano /home/admin/.bashrc
-$ sudo nano /home/bitcoin/.bashrc
+# uncomment 
+force_color_prompt=yes
+# add (see screenshot)
+PS1="${debian_chroot:+($debian_chroot)}\[\e[33m\]\u \[\033[01;34m\]\w\[\e[33;40m\] ฿\[\e[m\] "
+# set "ls" to always use the -la option (add at the end of the file)
+alias ls='ls -la --color=always'
 
-# reload .bashrc (or just wait until next login)
 $ source /home/admin/.bashrc
 ```
-
-
-
-https://gist.github.com/Stadicus/570f8e81b17fa426973da10d1ac8671d#file-bashrc
-
-
 
 ![img](images/pimp_your_command_line_bashrc.png)  
 
 *It’s safest to comment # the original line and add the new color prompt below*
+
+### Increase your open files limit
+
+In case your RaspiBolt is swamped with internet requests (honest or malicious due to a DDoS attack), you will quickly encounter the `can't accept connection: too many open files` error. This is due to a limit on open files (representing individual tcp connections) that is set too low.
+
+Edit the following three files, add the additional line(s) right before the end comment, save and exit.
+
+```
+$ sudo nano /etc/security/limits.conf
+*    soft nofile 128000
+*    hard nofile 128000
+root soft nofile 128000
+root hard nofile 128000
+```
+
+[![Edit pam.d/limits.conf](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_nofile_limits.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_nofile_limits.png)
+
+```
+$ sudo nano /etc/pam.d/common-session
+session required pam_limits.so
+```
+
+[![Edit pam.d/common-session](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_nofile_common-session.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_nofile_common-session.png)
+
+```
+$ sudo nano /etc/pam.d/common-session-noninteractive
+session required pam_limits.so
+```
+
+[![Edit pam.d/common-session-noninteractive](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_nofile_common-session-noninteractive.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_nofile_common-session-noninteractive.png)
 
 
 
@@ -395,7 +370,7 @@ $ cd /home/admin/download
 
 ```
 # download the latest Bitcoin Core ARM binaries (check https://bitcoin.org/en/download)
-$ wget https://bitcoin.org/bin/bitcoin-core-0.16.0/bitcoin-0.16.0???
+$ wget https://bitcoin.org/bin/bitcoin-core-0.16.0/bitcoin-0.16.0-arm-linux-gnueabihf.tar.gz
 $ wget https://bitcoin.org/bin/bitcoin-core-0.16.0/SHA256SUMS.asc
 $ wget https://bitcoin.org/laanwj-releases.asc
 ```
@@ -432,8 +407,8 @@ Bitcoin Core Daemon version v0.16.0
 ```
 # configuration
 $ sudo su bitcoin
-$ mkdir /mnt/hdd/bitcoin_testnet
-$ ln -s /mnt/hdd/bitcoin_testnet /home/bitcoin/.bitcoin
+$ mkdir /mnt/hdd/bitcoin
+$ ln -s /mnt/hdd/bitcoin /home/bitcoin/.bitcoin
 ```
 
 ```
