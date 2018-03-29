@@ -106,9 +106,13 @@ $ passwd
 ```
 
 ```
+# wait until the process 'unattended-upgr' is finished (about 5 minutes), restart
+$ top
+$ shutdown -r now
+
 # update the operating system
 $ apt update
-$ apt upgrade
+# $ apt upgrade
 $ apt dist-upgrade
 $ apt install linux-image-xu3 
 # answer [y], then [no] (do not abort)
@@ -134,21 +138,20 @@ $ nano /etc/hosts
 ```
 
 ```
+# TODO
 # disable Swap file (this would degrade the MicroSD card)
-$ swapoff --all
+# $ swapoff --all
 ```
 
 ```
 # create user "admin" and change password to [password A]
-$ useradd -m admin
+$ adduser admin
 $ adduser admin sudo
-$ passwd admin
 ```
 
 ```
 # create user "bitcoin" and change password to [password C]
-$ useradd -m bitcoin
-$ passwd bitcoin
+$ adduser bitcoin
 ```
 
 #### Mounting the hard disk
@@ -189,8 +192,29 @@ $ chown bitcoin:bitcoin /mnt/hdd/
 
 ```
 # make sure user "admin" uses bash as standard shell
-$ sudo chsh admin -s /bin/bash
+$ chsh admin -s /bin/bash
 ```
+
+#### Creating a Swap File
+
+The usage of a swap file can degrade your SD card very quickly. Therefore, we will move it to the external hard disk.
+
+```
+$ mkdir /mnt/hdd/swap
+$ dd if=/dev/zero of=/mnt/hdd/swap/swapfile bs=1M count=4096
+$ chmod -R 0600 /mnt/hdd/swap/
+$ mkswap /mnt/hdd/swap/swapfile
+$ swapon /mnt/hdd/swap/swapfile
+
+$ nano /etc/fstab
+/mnt/hdd/swap/swapfile    none    swap    sw    0   0
+
+swapon -s
+```
+
+
+
+
 
 ```
 # restart
@@ -218,13 +242,15 @@ The firewall denies all connection attempts from other peers by default and allo
 $ sudo su
 ```
 
+The line `ufw allow from 192.168.0.0/24 …` below assumes that the IP address of your Pi is something like `192.168.0.???`, the ??? being any number from 0 to 255. If your IP address is `12.34.56.78`, you must adapt this line to `ufw allow from 12.34.56.**0**/24 …`.
+
 ```
 $ apt install ufw
 $ ufw default deny incoming
 $ ufw default allow outgoing
 $ ufw allow from 192.168.0.0/24 to any port 22 comment 'allow SSH from local LAN'
-$ ufw allow 9735 comment 'allow Lightning'
-$ ufw deny 8333 comment  'deny Bitcoin mainnet'
+$ ufw allow 9735 comment  'allow Lightning'
+$ ufw allow 8333 comment  'allow Bitcoin mainnet'
 $ ufw allow 18333 comment 'allow Bitcoin testnet'
 $ ufw enable
 $ systemctl enable ufw
