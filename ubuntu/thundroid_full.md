@@ -8,7 +8,7 @@ Bitcoin is a native digital currency for the internet age. It can be thought of 
 
 > A purely peer-to-peer version of electronic cash [which] would allow online payments to be sent directly from one party to another without going through a financial institution. 
 
-Being peer-too-peer means that it does not rely on a middleman (eg. a bank) and can be transfered as a bearer asset, like physical cash, without asking anyone for permission. With the added benefit that it does not need to be stored physically, as it is secured by a cryptographic key, and can be transferred within minutes to anywhere in the world. One key component of this free open-source financial system is the blockchain, the ledger that keeps track of who owns how many bitcoin and that is stored as an identical copy by all users that decide to run a full Bitcoin node. (Learn more on [bitcoin.org](https://bitcoin.org))
+Being peer-too-peer means that Bitcoin does not rely on a middleman (eg. a bank) and can be transfered as a bearer asset, like physical cash, without asking anyone for permission. With the added benefit that it does not need to be stored physically, as it is secured by a cryptographic key, and can be transferred within minutes to anywhere in the world. One key component of this free open-source financial system is the blockchain, the ledger that keeps track of who owns how many bitcoin and that is stored as an identical copy by all users that decide to run a full Bitcoin node. (Learn more on [bitcoin.org](https://bitcoin.org))
 
 Bitcoi is a economic experiment of epic scope, and it's success is by no means certain. In any case, *Bitcoin as a new technology* is an incredibly interesting endeavor, especially because of its interdisciplinary nature and the very low barrier to entry. *Bitcoin as sound money*, being scarce and non-inflationary, challenging money as one of the last true monopolies of nation states, could have a major impact on economic principles and society as a whole. 
 
@@ -26,17 +26,26 @@ To preserve the decentralized nature of this monetary system, I think **it is im
 
 ### Purpose
 
-My aim is to set up a **trustless Bitcoin Core and Lightning node** that runs 24/7, is part of and supports the decentralization of the Lightning network by routing payments and can be used to send and receive personal payments using the command line interface.
+The aim is to set up a Bitcoin and Lightning node that
 
-This server is set up **without graphical user** **interface** and is used remotely using the Secure Shell (SSH) command line. In the future, this server should function as my **personal backend for desktop and mobile wallets**, but I haven’t found a good solution to this yet. So, command line it is for the moment.
+* is as fully validating Bitcoin Full Node and does not require any trust in a 3rd party,
+* is reliably running 24/7,
+* is part of and supports the decentralization of the Lightning network by routing payments and
+* can be used to send and receive personal payments using the command line interface.
+
+This server is set up without graphical user interface and is used  remotely using the Secure Shell (SSH) command line. This  server can also function as a personal Bitcoin backend for the desktop Electrum wallet.
 
 ### Target audience
 
 This guide strives to give simple and foolproof instructions. But the goal is also to do everything ourselves, no shortcuts that involve trust in a 3rd party allowed. This makes this guide quite technical, but I try to make it as straightforward as possible and explain everything for you to gain a basic understanding of the how and why.
 
-Also, please be aware that all Lightning implementations are still in alpha phase and bugs are to be expected. If you like to learn about Linux, Bitcoin and Lightning, this guide is for you.
+### A word of caution
 
-## 1) System setup
+All components of the Lightning network are still under development  and we are dealing with real money here. So this guide follows a  conservative approach: first setup and test everything on Bitcoin  testnet, then - once you are comfortable to put real money on the line -  switch to Bitcoin mainnet with a few simple changes.
+
+  
+
+## 1) Preparations
 
 ### Choosing the Odroid HC2
 
@@ -77,7 +86,83 @@ Exact file used: [ubuntu-16.04.3-4.14-minimal-odroid-xu4-20171213.img.xz](https:
 
 Download the image, flash it on your MicroSD card, put it into your Thundroid, connect it to your network via cable and connect the power adapter. The initial boot can take several minutes. 
 
-Configure your network router to assign a static IP address to your Thundroid. After rebooting the HC2, as SSH is on by default, you can connect using your favorite SSH client.
+Configure your network router to assign a static IP address to your Thundroid. 
+
+  
+
+## 2) Download the Bitcoin blockchain
+
+The Bitcoin blockchain records all transactions and basically defines  who owns how many bitcoin. This is the most crucial of all information  and we should not rely on someone else to provide this data. To set up  our Bitcoin Full Node on mainnet, we need to
+
+* download the whole blockchain (~ 200 GB),
+* verify every Bitcoin transaction that ever occurred and every block ever mined,
+* create an index database for all transactions, so that we can query it later on,
+* calculate all bitcoin address balances (called the UTXO set).
+
+👉 See [Running a Full Node](https://bitcoin.org/en/full-node) for additional information.
+
+Although we will set up the RaspiBolt for the Bitcoin testnet first,  the validation of the Bitcoin mainnet blockchain can take several days.  This is the reason why we already start this task now.
+
+### Using a regular computer
+
+You can imagine that the Raspberry Pi is not quite up to this huge  task. The download is not the problem, but to initially process the  whole blockchain would take weeks due to its low computing  power and lack of memory. We need to download and verify the blockchain  with Bitcoin Core on a regular computer, and then transfer the data to  the Pi. This needs to be done only once. After that the Pi can easily  keep up with new blocks.
+
+This guide assumes that you will use a  Windows machine for this  task, but it works with most operating systems. You need to have about  250 GB free disk space available, internally or on an external hard disk. As indexing creates heavy  read/write traffic, the faster your hard disk the better. An internal  drive or an external USB3 hard disk will be significantly faster than  one with a USB2 connection.
+
+* **Recommended**: The best configuration is to format the  external hard disk of the Pi with the Ext4 file system, which is better  suited for our use case. Using SPC, we then copy the blockchain from  the Windows computer over the local network.
+* **Or**, if you want to use an external hard disk for  your Pi that already contains data, eg. because you already downloaded  the blockchain, this works as well. You can use the disk as is, but need  to skip the formatting part later in this guide.
+
+### Download and verify Bitcoin Core
+
+Download the Bitcoin Core installer from bitcoin.org/download and  store it in the directory you want to use to download the blockchain. To  check the authenticity of the program, we calculate its checksum and  compare it with the checksums provided.
+
+In Windows, I’ll preface all commands you need to enter with `>` , so with the command `> cd bitcoin` , just enter `cd bitcoin` and hit enter.
+
+Open the Windows command prompt (`Win+R`, enter `cmd`, hit `Enter`), navigate to the bitcoin directory (for me, it's on drive `D:`, check in Windows Explorer) and create the new directory `bitcoin_mainnet`. Then calculate the checksum of the already downloaded program.
+
+```
+> G:
+> cd \bitcoin
+> mkdir bitcoin_mainnet
+> dir
+> certutil -hashfile bitcoin-0.16.0-win64-setup.exe sha256
+6d93ba3b9c3e34f74ccfaeacc79f968755ba0da1e2d75ce654cf276feb2aa16d
+```
+
+[![Windows Command Prompt: verify checksum](https://github.com/Stadicus/guides/raw/master/raspibolt/images/10_blockchain_wincheck.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/10_blockchain_wincheck.png)
+
+Compare this value with the [release signatures](https://bitcoin.org/bin/bitcoin-core-0.16.0/SHA256SUMS.asc). For the Windows v0.16.0 binaries, its
+
+```
+32 bit:  7558249b04527d7d0bf2663f9cfe76d6c5f83ae90e513241f94fda6151396a29
+64 bit:  6d93ba3b9c3e34f74ccfaeacc79f968755ba0da1e2d75ce654cf276feb2aa16d
+```
+
+Usually, you would also need to check the signature of this file, but  it's a pain on Windows, so we will do it on the Pi later on.
+
+### Installing Bitcoin Core
+
+Execute the Bitcoin Core installation file (you might need to  right-click and choose "Run as administrator") and install it using the  default settings. Start the program `bitcoin-qt.exe` in the directory "C:\Program Files\Bitcoin". Choose your new “bitcoin_mainnet” folder as the custom data directory.
+
+[![Bitcoin Core directory selection](https://github.com/Stadicus/guides/raw/master/raspibolt/images/10_bitcoinqt_directory.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/10_bitcoinqt_directory.png)
+
+Bitcoin Core opens and starts immediately syncing the blockchain.  Now, we need to set one **very important** additional setting in the  “bitcoin.conf” file. If not set, the the whole blockchain will be useless and needs to be revalidated! Using the menu, open `Settings` / `Options` and click the button `Open Configuration File`. Enter the following line:
+
+```
+txindex=1
+```
+
+If your computer has a lot of memory, you can increase the database in-memory cache by adding the following line (with megabytes of memory  to use, adjusted to your computer) as well:
+
+```
+dbcache=6000
+```
+
+Save and close the text file, quit Bitcoin Core using `File` / `Exit` and restart the program. The program will start syncing again.
+
+Let the blockchain sync for now, we can already start working on the Thundroid.
+
+  
 
 ## 2) Working on your Thundroid
 
@@ -91,9 +176,9 @@ You will need several passwords and I find it easiest to write them all down in 
 [ C ] Lightning API password
 ```
 
-Store a copy of your passwords somewhere safe (preferably in a password manager like KeePass or LastPast) and keep your original notes out of sight once your system is up and running.
+Store a copy of your passwords somewhere safe (preferably in a password manager like KeePass or LastPast) and keep your original notes out of sight once your system is up and running. 
 
-### The command prompt
+### The command line
 
 Everything is configured on the Linux command prompt. Throughout this guide I use the following notation:
 
@@ -107,15 +192,34 @@ No prefix            This is either an output of the command above
                      or something you can copy/paste into a file
 ```
 
+* **Auto-complete commands**: When you enter commands, you can use the `Tab` key for auto-completion, eg. for commands, directories or filenames.
+* **Command history**: by pressing ⬆️ and ⬇️ on your keyboard, you can recall your previously entered commands.
+* **Common Linux commands**: For a very selective reference list of Linux commands, please refer to the [FAQ](https://github.com/Stadicus/guides/blob/master/raspibolt/raspibolt_faq.md) page.
+* **Use admin privileges**: Our regular user has no admin privileges. If a command needs to edit the system configuration, we need to use the `sudo` ("superuser do") command as prefix. Instead of editing a system file with `nano /etc/fstab`, we use `sudo nano /etc/fstab`.
+   For security reasons, the user "bitcoin" cannot use the `sudo` command.
+* **Using the Nano text editor**: We use the Nano editor  to create new text files or edit existing ones. It's not complicated,  but to save and exit is not intuitive.
+  * Save: hit `Ctrl-O` (for Output), confirm the filename, and hit the `Enter` key
+  * Exit: hit `Ctrl-X`
+* **Copy / Paste**: If you are using Windows and the PuTTY  SSH client, you can copy text from the shell by selecting it with your  mouse (no need to click anything), and paste stuff at the cursor  position with a right-click anywhere in the ssh window.
 
+### Connecting to Thundroid
 
-When you enter commands, you can use the “Tab” key for autocompletion, eg. for commands, directories or filenames.
+Now it’s time to connect to the Pi via SSH and get to work. For that, a  Secure Shell (SSH) client is needed. Install, start and connect: 
 
-If you are using Windows, I recommend to use the SSH client [KiTTY](http://kitty.9bis.com). You can **copy** text from the shell by selecting it with your mouse (no need to click anything), and **paste** stuff with a right-click.
+* **Windows**: I recommend to use the SSH client [KiTTY](http://kitty.9bis.com). You can **copy** text from the shell by selecting it with your mouse (no need to click anything), and **paste** stuff with a right-click.
+* **Mac OS**: built-in SSH client (see [this article](http://osxdaily.com/2017/04/28/howto-ssh-client-mac/)) 
+* **Linux**: just use the native command, eg. `ssh pi@192.168.0.20` 
+
+Use the following SSH connection settings:
+
+* host name: the static address you set in the router, eg. `192.168.0.20`
+* port: `22`
+* username: `root`
+* password:  `odroid`.
 
 ### Basic configuration
 
-Connect to the node using SSH. The access credentials are user: `root ` and password: `odroid`.
+You are now on the command line of your own Bitcoin node. First we take care of the basic configuration. Enter the following commands: 
 
 ```
 # change root password to [password A]
@@ -150,13 +254,25 @@ $ swapoff --all
 $ useradd -m admin
 $ adduser admin sudo
 $ passwd admin
+```
 
+### Adding the service user “bitcoin”
+
+The bitcoin and lightning processes will run in the background (as  daemon) and use the separate user “bitcoin” for security reasons. This  user does not have admin rights and cannot change the system  configuration.
+
+* Enter the following command, set your `password [A]` and confirm all questions with the enter/ key.  
+
+```
 # create user "bitcoin" and change password to [password C]
 $ useradd -m bitcoin
 $ passwd bitcoin
 ```
 
 ### Mounting the hard disk
+
+The external hard disk is attached to the file system and can be accessed as a regular folder (this is called “mounting”). As a server installation, the Linux native file system Ext4 is the best choice for the external hard disk. 
+
+⚠️ All data on this hard disk will be erased with the following steps! 
 
 ```
 # get NAME for hard disk
@@ -187,13 +303,36 @@ $ sudo chsh admin -s /bin/bash
 $ shutdown -r now
 ```
 
+### Moving the Swap File
+
+The usage of a swap file can degrade the SD card very quickly. Therefore, we will move it to the external hard disk.
+
+* Edit the configuration file and replace existing entries with the ones below. Save and exit.
+   `$ sudo nano /etc/dphys-swapfile`
+
+```
+CONF_SWAPFILE=/mnt/hdd/swapfile
+CONF_SWAPSIZE=1000
+```
+
+* Delete the old swap file
+   `$ sudo dphys-swapfile swapoff`  
+   `$ sudo rm /var/swap`
+* Enable new swap configuration
+   `$ sudo dphys-swapfile setup`  
+   `$ sudo dphys-swapfile swapon`
+
 ## 3) Hardening your Thundroid
 
-Your Thundroid will handle money and needs to be super-secure. Login as “admin” (we will not use “root” again).
+Your Thundroid will be visible from the internet and therefore needs to be  secured against attacks. A firewall controls what traffic is permitted  and closes possible security holes.
+
+Login as “admin” (we will not use “root” again).
+
+The line `ufw allow from 192.168.0.0/24…` below assumes that the IP address of your Pi is something like `192.168.0.???`, the ??? being any number from 0 to 255. If your IP address is `12.34.56.78`, you must adapt this line to `ufw allow from 12.34.56.0/24…`.
 
 ### fail2ban
 
-Fail2ban monitors SSH login attempts and bans a remote peer after 5 unsuccessful tries for 10 minutes.
+Fail2ban monitors SSH login attempts and bans a remote peer after 5 unsuccessful tries for 10 minutes. This makes a brute-force attack unfeasible, as it would simply take too long. 
 
 ```
 $ sudo apt install fail2ban
@@ -226,25 +365,27 @@ $ exit
 
 ### SSH Keys
 
-We will disable login via password completely and require a SSH certificate. To create it for your “admin” user, please follow this guide:
+One of the best options to secure the SSH login is to completely  disable the password login and require a SSH key certificate. Only  someone with physical possession of the private key can login.
 
-[**Configure "No Password SSH Keys Authentication" with PuTTY on Linux Servers***SSH ( Secure SHELL) is one of the most used network protocol to connect and login to remote Linux servers, due to its…*www.tecmint.com](https://www.tecmint.com/ssh-passwordless-login-with-putty/)
+* Set up SSH keys for the "admin" user:
+   [Configure “No Password SSH Keys Authentication” with PuTTY on Linux Servers](https://www.tecmint.com/ssh-passwordless-login-with-putty)
 
-If you can log in as “admin” with your SSH key (check!), we disable the password login.
+You should now generated three files. Keep them safe, we will now disable the password login. [![SSH keys files](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_ssh_keys_filelist.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_ssh_keys_filelist.png)
 
-```
-$ sudo nano /etc/ssh/sshd_config
-# change ChallengeResponseAuthentication and PasswordAuthentication 
-# to "no" (uncomment if necessary), save and exit
- 
-# copy the SSH public key for user "root", just in case
-$ sudo mkdir /root/.ssh
-$ sudo cp /home/admin/.ssh/authorized_keys /root/.ssh/
-$ sudo chown -R root:root /root/.ssh/
-$ sudo chmod -R 700 /root/.ssh/
-
-$ sudo systemctl restart sshd.service
-```
+* Logout (`exit`) and make sure that you can log in as "admin" with your SSH key
+* Edit ssh config file
+   `$ sudo nano /etc/ssh/sshd_config`
+* Change settings "ChallengeResponseAuthentication" and  "PasswordAuthentication" to "no" (uncomment the line by removing # if  necessary)
+   [![SSH config](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_ssh_config.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_ssh_config.png)
+* Save config file and exit
+* Copy the SSH public key for user "root", just in case
+   `$ sudo mkdir /root/.ssh`
+   `$ sudo cp /home/admin/.ssh/authorized_keys /root/.ssh/`
+   `$ sudo chown -R root:root /root/.ssh/`
+   `$ sudo chmod -R 700 /root/.ssh/`
+   `$ sudo systemctl restart ssh`
+* Exit and log in again. 
+   `$ exit`
 
 You can now only login with “admin” or “root” and your SSH key. As you cannot connect a screen to the Odroid, SSH is your only option.
 
@@ -252,138 +393,648 @@ You can now only login with “admin” or “root” and your SSH key. As you c
 
 Worst case scenario: you need to flash the MicroSD card and set up the system again, all important stuff is still on the harddrive.
 
-## Installing Bitcoin
+### Increase your open files limit
 
-Installing the Bitcoin Core software connects our node to the Bitcoin network, and allows us to use it also as a trustless Full Node.
+In case your Thundroid is swamped with internet requests (honest or  malicious due to a DDoS attack), you will quickly encounter the `can't accept connection: too many open files` error. This is due to a limit on open files (representing individual tcp connections) that is set too low.
 
-```
-$ mkdir /home/admin/download
-$ cd /home/admin/download
-
-# download the latest Bitcoin Core ARM binaries (check https://bitcoin.org/en/download)
-$ wget https://bitcoin.org/bin/bitcoin-core-0.16.0/bitcoin-0.16.0-arm-linux-gnueabihf.tar.gz
-$ wget https://bitcoin.org/bin/bitcoin-core-0.16.0/SHA256SUMS.asc
-$ wget https://bitcoin.org/laanwj-releases.asc
-
-# check that the reference checksum matches the real checksum
-# output: "bitcoin-0.16.0-arm-linux-gnueabihf.tar.gz: OK"
-$ sha256sum --check SHA256SUMS.asc --ignore-missing
-
-# manually check the fingerprint of the public key:
-# 01EA 5486 DE18 A882 D4C2  6845 90C8 019E 36C2 E964
-$ gpg --with-fingerprint ./laanwj-releases.asc
-
-# import the public key and verify the signed checksum file
-# output: "Good signature from Wladimir ..."
-# check the fingerprint again in case of malicious keys 
-# 01EA 5486 DE18 A882 D4C2  6845 90C8 019E 36C2 E964
-$ gpg --import ./laanwj-releases.asc
-$ gpg --verify SHA256SUMS.asc
-
-# extract, install and check active version
-$ tar -xvf bitcoin-0.16.0-arm-linux-gnueabihf.tar.gz
-$ sudo install -m 0755 -o root -g root -t /usr/local/bin bitcoin-0.16.0/bin/*
-$ bitcoind --version
-Bitcoin Core Daemon version v0.16.0
-
-# configuration
-$ sudo su bitcoin
-$ mkdir /mnt/hdd/bitcoin_testnet
-$ ln -s /mnt/hdd/bitcoin_testnet /home/bitcoin/.bitcoin
-
-# copy/paste the following Bitcoin configuration file 
-# (replace PASSWORD_[E] with your password)
-$ nano /home/bitcoin/.bitcoin/bitcoin.conf
-```
-
-Content of the file *bitcoin.conf*:
+Edit the following three files, add the additional line(s) right before the end comment, save and exit.
 
 ```
-# Example bitcoin.conf for Thundroid
+$ sudo nano /etc/security/limits.conf
+*    soft nofile 128000
+*    hard nofile 128000
+root soft nofile 128000
+root hard nofile 128000
+```
+
+[![Edit pam.d/limits.conf](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_nofile_limits.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_nofile_limits.png)
+
+```
+$ sudo nano /etc/pam.d/common-session
+session required pam_limits.so
+```
+
+[![Edit pam.d/common-session](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_nofile_common-session.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_nofile_common-session.png)
+
+```
+$ sudo nano /etc/pam.d/common-session-noninteractive
+session required pam_limits.so
+```
+
+[![Edit pam.d/common-session-noninteractive](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_nofile_common-session-noninteractive.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_nofile_common-session-noninteractive.png)
+
+  
+
+## Bitcoin
+
+The base of the Lightning node is a fully trustless [Bitcoin Core](https://bitcoin.org/en/bitcoin-core/)  node. It keeps a complete copy of the blockchain and validates all  transactions and blocks. By doing all this work ourselves, nobody else  needs to be trusted.
+
+In the beginning, we will use the Bitcoin testnet to familiarize  ourselves with its operations. This sync is handled directly by the Pi  and should not take longer than a few hours. Just let it sync overnight.
+
+### Installation
+
+We will download the software directly from bitcoin.org, verify its  signature to make sure that we use an official release and install it.
+
+* Login as "admin" and create a download folder
+   `$ mkdir /home/admin/download`
+   `$ cd /home/admin/download`
+
+We download the latest Bitcoin Core binaries (the application) and  compare the file with the signed checksum. This is a precaution to make  sure that this is an official release and not a malicious version trying  to steal our money.
+
+* Get the latest download links at bitcoin.org/en/download, they change  with each update. Then run the following  commands (with adjusted  filenames) and check the output where indicated:
+   `$ wget https://bitcoin.org/bin/bitcoin-core-0.16.0/bitcoin-0.16.0-arm-linux-gnueabihf.tar.gz`
+   `$ wget https://bitcoin.org/bin/bitcoin-core-0.16.0/SHA256SUMS.asc`
+   `$ wget https://bitcoin.org/laanwj-releases.asc`
+* Check that the reference checksum matches the real checksum
+   `$ sha256sum --check SHA256SUMS.asc --ignore-missing`
+   `> bitcoin-0.16.0-arm-linux-gnueabihf.tar.gz: OK`
+* Manually check the fingerprint of the public key:
+   `$ gpg --with-fingerprint ./laanwj-releases.asc`
+   `> 01EA 5486 DE18 A882 D4C2  6845 90C8 019E 36C2 E964`
+* Import the public key of Wladimir van der Laan, verify the signed  checksum file and check the fingerprint again in case of malicious keys
+   `$ gpg --import ./laanwj-releases.asc`
+   `$ gpg --verify SHA256SUMS.asc`
+   `> gpg: Good signature from Wladimir ...`
+   `> Primary key fingerprint: 01EA 5486 DE18 A882 D4C2 6845 90C8 019E 36C2 E964`
+
+[![commands to check bitcoind signature](https://github.com/Stadicus/guides/raw/master/raspibolt/images/30_checksum.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/30_checksum.png)
+
+* Now we know that the keys from bitcoin.org are valid, so we can also  verify the Windows binary checksums. Compare the following output with  the checksum of your Windows Bitcoin Core download.
+   `$ cat SHA256SUMS.asc | grep win`
+
+```
+7558249b04527d7d0bf2663f9cfe76d6c5f83ae90e513241f94fda6151396a29  bitcoin-0.16.0-win32-setup.exe
+60d65d6e57f42164e1c04bb5bb65156d87f0433825a1c1f1f5f6aebf5c8df424  bitcoin-0.16.0-win32.zip
+6d93ba3b9c3e34f74ccfaeacc79f968755ba0da1e2d75ce654cf276feb2aa16d  bitcoin-0.16.0-win64-setup.exe
+42706da1a95b2db8c5808529f73c2063a0dd770f71e0c8506bfa86dc0f3403ef  bitcoin-0.16.0-win64.zip
+```
+
+* Extract the Bitcoin Core binaries, install them and check the version.
+   `$ tar -xvf bitcoin-0.16.0-arm-linux-gnueabihf.tar.gz`
+   `$ sudo install -m 0755 -o root -g root -t /usr/local/bin bitcoin-0.16.0/bin/*`
+   `$ bitcoind --version`
+   `> Bitcoin Core Daemon version v0.16.0`
+
+### Prepare Bitcoin Core directory
+
+We use the Bitcoin daemon, called “bitcoind”, that runs in the  background without user interface and stores all data in a the directory   `/home/bitcoin/.bitcoin`. Instead of creating a real directory, we create a link that points to a directory on the external hard disk.
+
+* Change to user “bitcoin” and enter the password.
+   `$ sudo su bitcoin`
+* We add a symbolic link that points to the external hard disk.
+   `$ ln -s /mnt/hdd/bitcoin /home/bitcoin/.bitcoin`
+* Navigate to the home directory and check the symbolic link (the target must not be red). The content of this directory will actually be  on the external hard disk.
+   `$ cd`
+   `$ ls -la`
+
+[![verify .bitcoin symlink](https://github.com/Stadicus/guides/raw/master/raspibolt/images/30_show_symlink.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/30_show_symlink.png)
+
+### Configuration
+
+Now, the configuration file for bitcoind needs to be created. Open it  with Nano and paste the configuration below. Save and exit.
+ `$ nano /home/bitcoin/.bitcoin/bitcoin.conf`
+
+```
+# Thundroid LND Mainnet: bitcoind configuration
+# /home/bitcoin/.bitcoin/bitcoin.conf
+
+# remove the following line to enable Bitcoin mainnet
+testnet=1
+
+# Bitcoind options
 server=1
 daemon=1
-testnet=1
 txindex=1
+disablewallet=1
 
 # Connection settings
-#externalip=111.222.333.444   # to announce fixed ip
-#port=12345                   # for non-standard port
 rpcuser=bitcoin
-rpcpassword=PASSWORD_[E]
+rpcpassword=PASSWORD_[B]
 zmqpubrawblock=tcp://127.0.0.1:29000
 zmqpubrawtx=tcp://127.0.0.1:29000
+
+# Optimizations for limited hardware
+dbcache=100
+maxorphantx=10
+maxmempool=50
+maxconnections=40
+maxuploadtarget=5000
 ```
 
+### Autostart bitcoind
 
+The system needs to run the bitcoin daemon automatically in the  background, even when nobody is logged in. We use “systemd“, a daemon  that controls the startup process using configuration files.
 
-```
-# back to user "admin"
-$ exit
-
-# copy/paste the following systemd unit file
-$ sudo nano /etc/systemd/system/bitcoind.service
-```
+* Exit the “bitcoin” user session back to user “admin”
+   `$ exit`
+* Create the configuration file in the Nano text editor and copy the following paragraph.
+   `$ sudo nano /etc/systemd/system/bitcoind.service`
 
 Content of the file *bitcoind.service*:
 
 ```
+# RaspiBolt LND Mainnet: systemd unit for bitcoind
+# /etc/systemd/system/bitcoind.service
+
 [Unit]
 Description=Bitcoin daemon
 After=network.target
 
-# for use with sendmail alert
-#OnFailure=systemd-sendmail@%n
-
 [Service]
+ExecStart=/usr/local/bin/bitcoind -daemon -conf=/home/bitcoin/.bitcoin/bitcoin.conf -pid=/run/bitcoind/bitcoind.pid
+# Creates /run/bitcoind owned by bitcoin
+RuntimeDirectory=bitcoind
 User=bitcoin
 Group=bitcoin
 Type=forking
-PIDFile=/home/bitcoin/.bitcoin/bitcoind.pid
-ExecStart=/usr/local/bin/bitcoind -pid=/home/bitcoin/.bitcoin/bitcoind.pid
-KillMode=process
-Restart=always
-TimeoutSec=120
-RestartSec=30
+PIDFile=/run/bitcoind/bitcoind.pid
+Restart=on-failure
+
+# Hardening measures
+####################
+
+# Provide a private /tmp and /var/tmp.
+PrivateTmp=true
+
+# Mount /usr, /boot/ and /etc read-only for the process.
+ProtectSystem=full
+
+# Disallow the process and all of its children to gain
+# new privileges through execve().
+NoNewPrivileges=true
+
+# Use a new /dev namespace only populated with API pseudo devices
+# such as /dev/null, /dev/zero and /dev/random.
+PrivateDevices=true
+
+# Deny the creation of writable and executable memory mappings.
+MemoryDenyWriteExecute=true
 
 [Install]
 WantedBy=multi-user.target
 ```
 
+* Save and exit
+* Enable the configuration file
+   `$ sudo systemctl enable bitcoind.service`
+* Copy `bitcoin.conf` to user "admin" home directory for RPC credentials
+   `$ mkdir /home/admin/.bitcoin`
+   `$ sudo cp /home/bitcoin/.bitcoin/bitcoin.conf /home/admin/.bitcoin/`
+* Restart the Thundroid
+   `$ sudo shutdown -r now`
 
+### Verification of bitcoind operations
+
+After rebooting, the bitcoind should start and begin to sync and validate the Bitcoin blockchain.
+
+* Wait a bit, reconnect via SSH and login with the user “admin”.
+
+* Check the status of the bitcoin daemon that was started by systemd (exit with `Ctrl-C`)
+
+  `$ systemctl status bitcoind.service`
+
+[![Bitcoind status ](https://github.com/Stadicus/guides/raw/master/raspibolt/images/30_status_bitcoind.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/30_status_bitcoind.png)
+
+* See bitcoind in action by monitoring its log file (exit with `Ctrl-C`)
+   `$ sudo tail -f /home/bitcoin/.bitcoin/testnet3/debug.log`
+
+* Use the Bitcoin Core client `bitcoin-cli` to get information about the current blockchain
+   `$ bitcoin-cli getblockchaininfo`
+
+* Check public visibility of your node:
+
+  ```
+  $ curl -sL https://bitnodes.earn.com/api/v1/nodes/me-18333/ | jq
+  {
+    "success": true
+  }
+  ```
+
+* Please note:
+
+  * When “bitcoind” is still starting, you may get an error message like  “verifying blocks”. That’s normal, just give it a few minutes.
+  * Among other infos, the “verificationprogress” is shown. Once this  value reaches almost 1 (0.999…), the blockchain is up-to-date and fully  validated.
+
+
+
+## 4) Lightning Network: LND
+
+We will download and install the LND (Lightning Network Daemon) by [Lightning Labs](http://lightning.engineering/). Check out their [Github repository](https://github.com/lightningnetwork/lnd/blob/master/README.md) for a wealth of information about their open-source project and Lightning in general. 
+
+### Install LND
+
+Now to the good stuff: download, verify and install the LND binaries.
 
 ```
-# Enable the unit file and start it manually
-$ sudo systemctl enable bitcoind
-$ sudo systemctl start bitcoind
-$ systemctl status bitcoind
+$ cd /home/admin/download
+$ wget https://github.com/lightningnetwork/lnd/releases/download/v0.4.1-beta/lnd-linux-arm-v0.4.1-beta.tar.gz
+$ wget https://github.com/lightningnetwork/lnd/releases/download/v0.4.1-beta/manifest-v0.4.1-beta.txt
+$ wget https://github.com/lightningnetwork/lnd/releases/download/v0.4.1-beta/manifest-v0.4.1-beta.txt.sig
+$ wget https://keybase.io/roasbeef/pgp_keys.asc
 
-# check bitcoind operations (exit with Ctrl-C)
-$ sudo tail -f /home/bitcoin/.bitcoin/testnet3/debug.log
+$ sha256sum --check manifest-v0.4.1-beta.txt --ignore-missing
+> lnd-linux-arm-v0.4-beta.tar.gz: OK
 
-# check bitcoin blockchain verification progress
-$ sudo su bitcoin
-$ bitcoin-cli getblockchaininfo
+$ gpg ./pgp_keys.asc
+> 65317176B6857F98834EDBE8964EA263DD637C21
 
-# check public visibility
-$ curl -sL https://bitnodes.earn.com/api/v1/nodes/me-18333/ | jq
-{
-  "success": true
-}
+$ gpg --import ./pgp_keys.asc
+$ gpg --verify manifest-v0.4.1-beta.txt.sig
+> gpg: Good signature from "Olaoluwa Osuntokun <laolu32@gmail.com>" [unknown]
+> Primary key fingerprint: 6531 7176 B685 7F98 834E  DBE8 964E A263 DD63 7C21
+
+$ tar -xzf lnd-linux-arm-v0.4.1-beta.tar.gz
+$ ls -la
+$ sudo install -m 0755 -o root -g root -t /usr/local/bin lnd-linux-arm-v0.4.1-beta/*
+$ lnd --version
+> lnd version 0.4.1-beta commit=
 ```
 
+[![Checksum LND](https://github.com/Stadicus/guides/raw/master/raspibolt/images/40_checksum_lnd.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/40_checksum_lnd.png)
+
+### LND configuration
+
+Now that LND is installed, we need to configure it to work with Bitcoin Core and run automatically on startup.
+
+* Open a "bitcoin" user session
+   `$ sudo su bitcoin`
+* Create the LND working directory and the corresponding symbolic link
+   `$ mkdir /mnt/hdd/lnd`
+   `$ ln -s /mnt/hdd/lnd /home/bitcoin/.lnd`
+   `$ cd`
+   `$ ls -la`
+
+[![Check symlink LND](https://github.com/Stadicus/guides/raw/master/raspibolt/images/40_symlink_lnd.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/40_symlink_lnd.png)
+
+* Create the LND configuration file and paste the following content (adjust to your alias). Save and exit.
+   `$ nano /home/bitcoin/.lnd/lnd.conf`
+
+```
+# RaspiBolt LND Mainnet: lnd configuration
+# /home/bitcoin/.lnd/lnd.conf
+
+[Application Options]
+debuglevel=info
+debughtlc=true
+maxpendingchannels=5
+alias=YOUR_NAME [LND]
+color=#68F442
+
+[Bitcoin]
+bitcoin.active=1
+
+# enable either testnet or mainnet
+bitcoin.testnet=1
+#bitcoin.mainnet=1
+
+bitcoin.node=bitcoind
+
+[autopilot]
+autopilot.active=1
+autopilot.maxchannels=5
+autopilot.allocation=0.6
+```
+
+👉 Additional information: [sample-lnd.conf](https://github.com/lightningnetwork/lnd/blob/master/sample-lnd.conf) in the LND project repository
+
+* exit the "bitcoin" user session back to "admin"
+   `$ exit`
+* create LND systemd unit and with the following content. Save and exit.
+   `$ sudo nano /etc/systemd/system/lnd.service`
+
+```
+# RaspiBolt LND Mainnet: systemd unit for lnd
+# /etc/systemd/system/lnd.service
+
+[Unit]
+Description=LND Lightning Daemon
+Wants=bitcoind.service
+After=bitcoind.service
+
+# for use with sendmail alert
+#OnFailure=systemd-sendmail@%n
+
+[Service]
+# get var PUBIP from file
+EnvironmentFile=/run/publicip
+
+ExecStart=/usr/local/bin/lnd --externalip=${PUBLICIP}
+PIDFile=/home/bitcoin/.lnd/lnd.pid
+User=bitcoin
+Group=bitcoin
+LimitNOFILE=128000
+Type=simple
+KillMode=process
+TimeoutSec=180
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
+```
+
+* enable and start LND
+   `$ sudo systemctl enable lnd`
+   `$ sudo systemctl start lnd`
+   `$ systemctl status lnd`
+* monitor the LND logfile in realtime (exit with `Ctrl-C`)
+   `$ sudo journalctl -f -u lnd`
+
+[![LND startup log](https://github.com/Stadicus/guides/raw/master/raspibolt/images/40_start_lnd.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/40_start_lnd.png)
+
+### LND wallet setup
+
+Once LND is started, the process waits for us to create the integrated Bitcoin wallet (it does not use the bitcoind wallet).
+
+* Start a "bitcoin" user session
+   `$ sudo su bitcoin`
+
+* Create the LND wallet
+
+  `$ lncli create`
+
+* If you want to create a new wallet, enter your `password [C]` as wallet password, select `n` regarding an existing seed and enter the optional `password [D]` as seed passphrase. A new cipher seed consisting of 24 words is created.
+
+[![LND new cipher seed](https://github.com/Stadicus/guides/raw/master/raspibolt/images/40_cipher_seed.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/40_cipher_seed.png)
+
+These 24 words, combined with your passphrase (optional `password [D]`)   is all that you need to restore your Bitcoin wallet and all Lighting  channels. The current state of your channels, however, cannot be  recreated from this seed, this requires a continuous backup and is still  under development for LND.
+
+⚠️ This information must be kept secret at all times. **Write these 24 words down manually on a piece of paper and store it in a safe place.**  This piece of paper is all an attacker needs to completely empty your  wallet! Do not store it on a computer. Do not take a picture with your  mobile phone. **This information should never be stored anywhere in digital form.**
+
+* exit "bitcoin" user session
+   `$ exit`
+
+### Assign LND permissions to "admin"
+
+* Check if permission files `admin.macaroon` and `readonly.macaroon` have been created (if not, see open LND issue [#890](https://github.com/lightningnetwork/lnd/issues/890)).
+   `$ ls -la /home/bitcoin/.lnd/`
+
+[![Check macaroon](https://github.com/Stadicus/guides/raw/master/raspibolt/images/40_ls_macaroon.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/40_ls_macaroon.png)
+
+* Copy permission files and TLS cert to user "admin" to use `lncli`
+   `$ mkdir /home/admin/.lnd`
+   `$ sudo cp /home/bitcoin/.lnd/tls.cert /home/admin/.lnd`
+   `$ sudo cp /home/bitcoin/.lnd/admin.macaroon /home/admin/.lnd`
+   `$ sudo chown -R admin:admin /home/admin/.lnd/`
+* Make sure that `lncli` works by unlocking your wallet (enter `password [C]` ) and getting some node infos.
+   `$ lncli unlock`
+* Monitor the LND startup progress until it caught up with the testnet  blockchain (about 1.3m blocks at the moment). This can take up to 2  hours, after that you see a lot of very fast chatter (exit with `Ctrl-C`). `$ sudo journalctl -f -u lnd`
+
+### Get some testnet Bitcoin
+
+Now your Lightning node is ready. To use it in testnet, you can get some free testnet bitcoin from a faucet.
+
+* Generate a new Bitcoin address to receive funds on-chain
+   `$ lncli newaddress np2wkh`
+   `> "address": "2NCoq9q7............dkuca5LzPXnJ9NQ"`
+* Get testnet bitcoin:
+   <https://testnet.manu.backend.hamburg/faucet>
+* Check your LND wallet balance
+   `$ lncli walletbalance`
+* Monitor your transaction (the faucet shows the TX ID) on a Blockchain explorer:
+   <https://testnet.smartbit.com.au>
+
+### LND in action
+
+As soon as your funding transaction is mined and confirmed, LND will  start to open and maintain channels. This feature is called "Autopilot"  and is configured in the "lnd.conf" file. If you would like to maintain  your channels manually, you can disable the autopilot.
+
+Get yourself a payment request on [StarBlocks](https://starblocks.acinq.co/#/) or [Y’alls](https://yalls.org/) and move some coins!
+
+* `$ lncli listpeers`
+* `$ lncli listchannels`
+* `$ lncli sendpayment --pay_req=lntb32u1pdg7p...y0gtw6qtq0gcpk50kww`
+* `$ lncli listpayments`
+
+👉 see [Lightning API reference](http://api.lightning.community/) for additional information
+
+------
+
+### Before proceeding to mainnet
+
+This is the point of no return. Up until now, you can just start  over. Experiment with testnet bitcoin. Open and close channels on the  testnet.
+
+Once you switch to mainnet and send real bitcoin to your RaspiBolt, you have "skin in the game".
+
+* Make sure your RaspiBolt is working as expected.
+* Get a little practice with `bitcoin-cli` and its options (see [Bitcoin Core RPC documentation](https://bitcoin-rpc.github.io/))
+* Do a dry run with `lncli` and its many options (see [Lightning API reference](http://api.lightning.community/))
+* Try a few restarts (`sudo shutdown -r now`), is everything starting fine?
+
+------
 
 
-## 4) Lightning Network
+
+# Mainnet
+
+Are you feeling comfortable to put real bitcoin on the line? Here's how to do it.
+
+```
+Personal disclaimer: This guide is provided as-is and without any guarantees. Most components
+are under development and this guide may contain factual errors that result in the loss of your
+bitcoin. Use this guide at your own risk.
+```
+
+```
+Lightning Labs disclaimer: As this is the first mainnet release of lnd, we recommend that users
+experiment with only small amounts (#craefulgang #craefulgang #craefulgang).
+```
+
+## Copy the mainnet blockchain
+
+The current setup runs on Bitcoin testnet. Right at the beginning,  however, we started downloading the Bitcoin mainnet blockchain on your  regular computer. Check the verification progress directly in Bitcoin  Core on this computer. To proceed, it  should be fully synced (see  status bar).
+
+As soon as the verification is finished, shut down Bitcoin Core on  Windows. We will now copy the whole data structure to the RaspiBolt.  This takes about 6 hours.
+
+### Temporarily enable password login
+
+In order to copy the data with the user "bitcoin", we need to temporarily enable the password login.
+
+* As user "admin", edit the SSH config file and put a `#` in front of "PasswordAuthentication no" to disable the whole line. Save and exit.
+   `$ sudo nano /etc/ssh/sshd_config`
+   `# PasswordAuthentication no`
+* Restart the SSH daemon.
+   `$ sudo systemctl restart ssh`
+
+### Copy using WinSCP
+
+We are using "Secure Copy" (SCP), so [download and install WinSCP](https://winscp.net), a free open-source program.
+
+* With WinSCP, you can now connect to your Pi with the user "bitcoin".
+   [![WinSCP connection settings](https://github.com/Stadicus/guides/raw/master/raspibolt/images/50_WinSCP_connection.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/50_WinSCP_connection.png)
+* Accept the server certificate and navigate to the local and remote bitcoin directories:
+  * Local: `d:\bitcoin\bitcoin_mainnet\`
+  * Remote: `\mnt\hdd\bitcoin\`
+* You can now copy the two subdirectories `blocks` and `chainstate` from Local to Remote. This will take about 6 hours.
+   [![WinSCP copy](https://github.com/Stadicus/guides/raw/master/raspibolt/images/50_WinSCP_copy.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/50_WinSCP_copy.png)
+
+⚠️ The transfer must not be interupted. Make sure your computer does not go to sleep.
+
+👉_ Additional information: [Bitcoin Core data directory structure](https://en.bitcoin.it/wiki/Data_directory)
+
+### Error regarding timestamps
+
+When using an NTFS external hard disk, you might get the following error:
+ **Upload of file '.....' was successful, but error occurred while setting the permissions and/or timestamp.**
+
+You can safely ignore this and choose `Skip all` as NTFS does not support the necessary timestamp methods.
+
+### Disable password login again
+
+* As user "admin", remove the `#` in front of "PasswordAuthentication no" to enable the line. Save and exit.
+   `$ sudo nano /etc/ssh/sshd_config`
+   `PasswordAuthentication no`
+* Restart the SSH daemon.
+   `$ sudo systemctl restart ssh`
+
+## Send back your testnet Bitcoin
+
+To avoid burning our testnet Bitcoin, and as a courtesy to the next  testers, we close all our channels and withdraw the funds to the address  stated on the website of the [Bitcoin Testnet Faucet](https://testnet.manu.backend.hamburg/faucet).
+
+* `$ lncli closeallchannels`
+* Wait unitl the the channel balance is zero and the funds to be back in our on-chain wallet.
+   `$ lncli channelbalance`
+   `$ lncli walletbalance`
+
+* Send the amount provided by `walletbalance` minus 500  satoshis to account for fees. If you get an "insufficient funds" error,  deduct a bit more until the transaction gets broadcasted.
+   `$ lncli sendcoins 2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF [amount]`
+
+## Adjust configuration
+
+* Stop the Bitcoin and Lightning services.
+   `$ sudo systemctl stop lnd`
+   `$ sudo systemctl stop bitcoind`
+* Edit "bitcoin.conf" file by commenting  `testnet=1` out. Save and exit.
+   `$ sudo nano /home/bitcoin/.bitcoin/bitcoin.conf`
+
+```
+# remove the following line to enable Bitcoin mainnet
+#testnet=1
+```
+
+* Copy updated "bitcoin.conf" to user "admin" for credentials
+   `$ sudo cp /home/bitcoin/.bitcoin/bitcoin.conf /home/admin/.bitcoin/`
+* Edit "lnd.conf" file by switching from `bitcoin.testnet=1` to `bitcoin.mainnet=1`. Save and exit.
+   `$ sudo nano /home/bitcoin/.lnd/lnd.conf`
+
+```
+# enable either testnet or mainnet
+#bitcoin.testnet=1
+bitcoin.mainnet=1
+```
+
+## Restart bitcoind & lnd for mainnet
+
+⚠️ **Do not proceed** until the copy task of the mainnet blockchain is completely finished.
+
+* Start Bitcoind and check if it's operating on mainnet
+
+  `$ sudo systemctl start bitcoind`
+   `$ systemctl status bitcoind.service`
+   `$ sudo tail -f /home/bitcoin/.bitcoin/debug.log`  (exit with `Ctrl-C`)
+   `$ bitcoin-cli getblockchaininfo`
+
+* **Wait until the blockchain is fully synced**: "blocks" = "headers", otherwise you might run into performance / memory issues when creating a new lnd mainnet wallet.
+
+* Start LND and check its operation
+   `$ sudo systemctl start lnd`
+   `$ systemctl status lnd`
+   `$ sudo journalctl -f -u lnd`
+
+* If everything works fine, restart the RaspiBolt and check the operations again. `$ sudo shutdown -r now`
+
+* Monitor the startup process of first  `bitcoind` and then `lnd`
+   `$ sudo tail -f /home/bitcoin/.bitcoin/debug.log`
+   `$ sudo journalctl -f -u lnd`
+
+* Create the mainnet wallet with the **exact same** `password [C]` as on testnet. If you use another password, you need to recreate your access credentials.
+   `$ lncli create`
+
+* Copy permission files and TLS cert to user "admin" to use `lncli`
+   `$ sudo cp /home/bitcoin/.lnd/tls.cert /home/admin/.lnd`
+   `$ sudo cp /home/bitcoin/.lnd/admin.macaroon /home/admin/.lnd`
+
+* Restart `lnd` and unlock your wallet (enter `password [C]` )
+   `$ sudo systemctl restart lnd` `$ lncli unlock`
+
+* Monitor the LND startup progress until it caught up with the mainnet  blockchain (about 515k blocks at the moment). This can take up to 2  hours, then you see a lot of very fast chatter (exit with `Ctrl-C`).
+   `$ sudo journalctl -f -u lnd`
+
+* Make sure that `lncli` works by getting some node infos
+   `$ lncli getinfo`
+
+👉 **Important**: you need to manually unlock the lnd wallet after each restart of the lnd service!
+
+👉 See further below for **Known Issues**
+
+## Start using the Lightning Network
+
+### Fund your node
+
+Congratulations, your RaspiBolt is live on the Bitcoin mainnet! To  open channels and start using it, you need to fund it with some bitcoin.  For starters, put only on your node what you are willing to lose.  Monopoly money.
+
+* Generate a new Bitcoin address to receive funds on-chain
+   `$ lncli newaddress np2wkh`
+   `> "address": "3.........................."`
+* From your regular Bitcoin wallet, send a small amount of bitcoin to this address
+* Check your LND wallet balance
+   `$ lncli walletbalance`
+* Monitor your transaction on a Blockchain explorer: <https://smartbit.com.au>
+
+### LND in action
+
+As soon as your funding transaction is mined and confirmed, LND will  start to open and maintain channels. This feature is called "Autopilot"  and is configured in the "lnd.conf" file. If you would like to maintain  your channels manually, you can disable the autopilot.
+
+Some commands to try:
+
+* list all arguments for the command line interface (cli)
+   `$ lncli`
+* get help for a specific argument
+   `$ lncli help [ARGUMENT]`
+* find out some general stats about your node:
+   `$ lncli getinfo`
+* connect to a peer (you can find some nodes to connect to here: <https://1ml.com/>):
+   `$ lncli connect [NODE_URI]`
+* check the peers you are currently connected to:
+   `$ lncli listpeers`
+* open a channel with a peer:
+   `$ lncli openchannel [NODE_PUBKEY] [AMOUNT_IN_SATOSHIS] 0`
+   *keep in mind that [NODE_URI] includes @IP:PORT at the end, while [NODE_PUBKEY] doesn't*
+* check the status of your pending channels:
+   `$ lncli pendingchannels`
+* check the status of your active channels:
+   `$ lncli listchannels`
+* before paying an invoice, you should decode it to check if the amount and other infos are correct:
+   `$ lncli decodepayreq [INVOICE]`
+* pay an invoice:
+   `$ lncli payinvoice [INVOICE]`
+* check the payments that you sent:
+   `$ lncli listpayments`
+* create an invoice:
+   `$ lncli addinvoice [AMOUNT_IN_SATOSHIS]`
+* list all invoices:
+   `$ lncli listinvoices`
+* to close a channel, you need the following two arguments that can be determined with `listchannels` and are listed as "channelpoint": `FUNDING_TXID` : `OUTPUT_INDEX` .
+   `$ lncli listchannels`
+   `$ lncli closechannel [FUNDING_TXID] [OUTPUT_INDEX]`
+* to force close a channel (if your peer is offline or not cooperative), use
+   `$ lncli closechannel --force [FUNDING_TXID] [OUTPUT_INDEX]`
+
+👉 see [LND API reference](http://api.lightning.community/) for additional information
+
+### Try it out
+
+To try out your new Lightning node, you can send me a micro-tip:
+ [Article 'Beginner’s Guide to ️⚡Lightning️⚡ on a Raspberry Pi'](https://mainnet.yalls.org/articles/97d67df1-d721-417d-a6c0-11d793739be9:0965AC5E-56CD-4870-9041-E69616660E6F/70858a49-d91c-40fb-ae34-bddc2e938704) on Y'alls ($0.01)
 
 
 
+### Explore Lightning mainnet
 
+There are a lot of great resources to explore the Lightning mainnet in regard to your own node.
 
-
-
-
-
-
+* [Recksplorer](https://rompert.com/recksplorer/): Lightning Network Map
+* [1ML](https://1ml.com): Lightning Network Search and Analysis Engine
+* [lnroute.com](http://lnroute.com): comprehensive Lightning Network resources list
 
 
 
