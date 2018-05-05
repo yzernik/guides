@@ -4,36 +4,36 @@
 
 ## Introduction
 
-Bitcoin is a native digital currency for the internet age. It can be thought of as just another international currency, but without a native country, so it defies borders, trade policies, local laws and arbitrary inflation. In the 2008 [whitepaper](https://bitcoin.org/bitcoin.pdf) by the pseudonymous Satoshi Nakamoto it is described as:
+Bitcoin is a native digital currency for the internet age. It can be thought of as just another international currency, but without a native country, so it defies borders, trade policies and arbitrary inflation. In the 2008 [whitepaper](https://bitcoin.org/bitcoin.pdf) by the pseudonymous Satoshi Nakamoto it is described as:
 
 > A purely peer-to-peer version of electronic cash [which] would allow online payments to be sent directly from one party to another without going through a financial institution. 
 
-Being peer-too-peer means that Bitcoin does not rely on a middleman (eg. a bank) and can be transfered as a bearer asset, like physical cash, without asking anyone for permission. With the added benefit that it does not need to be stored physically, as it is secured by a cryptographic key, and can be transferred within minutes to anywhere in the world. One key component of this free open-source financial system is the blockchain, the ledger that keeps track of who owns how many bitcoin and that is stored as an identical copy by all users that decide to run a full Bitcoin node. (Learn more on [bitcoin.org](https://bitcoin.org))
+Being peer-too-peer means that Bitcoin does not rely on a middleman (eg. a bank) and can be transfered as a bearer asset, like physical cash, without asking anyone for permission. With the added benefit that it does not need to be stored physically, as it is secured by a cryptographic key, and can be transferred within minutes to anyone anywhere in the world. One key component of this free open-source financial system is the blockchain, the ledger that keeps track of who owns how many bitcoin and that is stored as an identical copy by all users that decide to run a full Bitcoin node. (Learn more on [bitcoin.org](https://bitcoin.org))
 
-Bitcoi is a economic experiment of epic scope, and it's success is by no means certain. In any case, *Bitcoin as a new technology* is an incredibly interesting endeavor, especially because of its interdisciplinary nature and the very low barrier to entry. *Bitcoin as sound money*, being scarce and non-inflationary, challenging money as one of the last true monopolies of nation states, could have a major impact on economic principles and society as a whole. 
+Bitcoin is a economic experiment of epic scope, and its success is by no means certain. In any case, *Bitcoin as a new technology* is an incredibly interesting endeavor, especially because of its interdisciplinary nature and the very low barriers to entry. *Bitcoin as sound money*, being scarce and non-inflationary, challenging money as one of the last true monopolies of nation states, could have a major impact on economic principles and society as a whole. 
 
-At the moment, Bitcoin is more a *store of value* and not really suited for small everyday transactions. Truly **decentralized blockchains are a scarce resource** and cannot scale to accommodate all global transactions. If you think about it, it cannot be good practice to store every coffee purchase redundantly all over the world for all eternety. These limitations are a great motivator to build better technology to scale exponentially, as opposed to just making everything bigger for linear scaling.
+At the moment, Bitcoin is more a *store of value* and not really suited for small everyday transactions. Truly decentralized blockchains are a scarce resource and cannot scale to accommodate all global transactions. If you think about it, it cannot be good practice to store every coffee purchase redundantly all over the world for all eternety. That would be like forcing everyone to download everyone elses emails as well. These limitations are a great motivator to build better technology on top of the Bitcoin blockchain to scale exponentially, as opposed to just making everything bigger for linear scaling.
 
 This is where the **Lightning Network** comes in. As one of several new blockchain “extensions”, its promise is to accommodate nearly unlimited transactions, with instant confirmation, minimal fees and increased privacy. It sounds almost too good to be true, but this technology is well researched, committed to the cypherpunk open-source ethos and leverages the solid underpinnings of Bitcoin. (Learn more: [bit.ly/2vWO8Yf](https://bit.ly/2vWO8Yf))
 
-To preserve the decentralized nature of this monetary system, I think **it is important that everybody can run their own trustless Bitcoin node**, preferably on cheap hardware like Odroid.
+To preserve the decentralized nature of this monetary system, it is important that everybody has at least the possibility to run their own trustless Bitcoin node, preferably on cheap hardware like Odroid.
 
 ---
 
-⚠️ *Please be aware that while Bitcoin has been battle-tested for almost a decade, the Lightning Network is still in beta and under heavy development. This guide allows you to set up your Bitcoin node, the Lightning part is optional. Read the "financial best practices part" before commiting real bitcoin to your node.*
+⚠️ *Please be aware that while Bitcoin has been battle-tested for almost a decade, the Lightning Network is still in beta and under heavy development. This guide also allows you to set up your Bitcoin node while just igrnoring the Lightning part. Read the "financial best practices" part before commiting real bitcoin to your node.*
 
 ---
 
 ### Purpose
 
-The aim is to set up a Bitcoin and Lightning node that
+This guide allows you to be your own bank. The aim is to set up a Bitcoin and Lightning node that 
 
 * is as fully validating Bitcoin Full Node and does not require any trust in a 3rd party,
 * is reliably running 24/7,
 * is part of and supports the decentralization of the Lightning network by routing payments and
 * can be used to send and receive personal payments using the command line interface.
 
-This server is set up without graphical user interface and is used  remotely using the Secure Shell (SSH) command line. This  server can also function as a personal Bitcoin backend for the desktop Electrum wallet.
+This server is set up without graphical user interface and is used  remotely using the Secure Shell (SSH) command line. It can also function as a personal Bitcoin backend for the desktop Electrum wallet.
 
 ### Target audience
 
@@ -49,7 +49,7 @@ All components of the Lightning network are still under development  and we are 
 
 ### Choosing the Odroid HC2
 
-After publishing the "Beginner's Guide to Lightning on a Raspberry Pi", I started to explore other hardware, as the Pi has drawbacks, mainly in the area of performance and the the hassle with attaching external storage which is especially important when storing the whole Bitcoin blockchain. 
+After publishing the "Beginner's Guide to Lightning on a Raspberry Pi", I started to explore other hardware, as the Pi has drawbacks, mainly in the area of performance and the the hassle with attaching external storage which is important when storing the big Bitcoin blockchain. 
 
 The [Hardkernel Odroid HC2](http://www.hardkernel.com/main/products/prdt_info.php) (or the HC1 for a smaller form factor) as a Linux-based mini PC is a perfect fit. Compared to a Rasperry Pi, it has the following advantages:
 
@@ -76,7 +76,7 @@ You also need the following:
 * Internal hard disk: 500 GB or more, SATA, 3.5" hdd, or 2.5" hdd/ssd
 * Network RJ45 cable
 
-Assembly is easy, just enter the hard disk and fix it with the the screws included with your Odroid. If you ordered the plastic case, just slide it over the metal body. 
+Assembly is easy, just enter the hard disk and fix it with the the screws included with your Odroid. If you ordered the plastic case, slide it over the metal body. 
 
 ### Installing the operating system
 
@@ -87,82 +87,6 @@ Exact file used: [ubuntu-16.04.3-4.14-minimal-odroid-xu4-20171213.img.xz](https:
 Download the image, flash it on your MicroSD card, put it into your Thundroid, connect it to your network via cable and connect the power adapter. The initial boot can take several minutes. 
 
 Configure your network router to assign a static IP address to your Thundroid. 
-
-  
-
-## 2) Download the Bitcoin blockchain
-
-The Bitcoin blockchain records all transactions and basically defines  who owns how many bitcoin. This is the most crucial of all information  and we should not rely on someone else to provide this data. To set up  our Bitcoin Full Node on mainnet, we need to
-
-* download the whole blockchain (~ 200 GB),
-* verify every Bitcoin transaction that ever occurred and every block ever mined,
-* create an index database for all transactions, so that we can query it later on,
-* calculate all bitcoin address balances (called the UTXO set).
-
-👉 See [Running a Full Node](https://bitcoin.org/en/full-node) for additional information.
-
-Although we will set up the RaspiBolt for the Bitcoin testnet first,  the validation of the Bitcoin mainnet blockchain can take several days.  This is the reason why we already start this task now.
-
-### Using a regular computer
-
-You can imagine that the Raspberry Pi is not quite up to this huge  task. The download is not the problem, but to initially process the  whole blockchain would take weeks due to its low computing  power and lack of memory. We need to download and verify the blockchain  with Bitcoin Core on a regular computer, and then transfer the data to  the Pi. This needs to be done only once. After that the Pi can easily  keep up with new blocks.
-
-This guide assumes that you will use a  Windows machine for this  task, but it works with most operating systems. You need to have about  250 GB free disk space available, internally or on an external hard disk. As indexing creates heavy  read/write traffic, the faster your hard disk the better. An internal  drive or an external USB3 hard disk will be significantly faster than  one with a USB2 connection.
-
-* **Recommended**: The best configuration is to format the  external hard disk of the Pi with the Ext4 file system, which is better  suited for our use case. Using SPC, we then copy the blockchain from  the Windows computer over the local network.
-* **Or**, if you want to use an external hard disk for  your Pi that already contains data, eg. because you already downloaded  the blockchain, this works as well. You can use the disk as is, but need  to skip the formatting part later in this guide.
-
-### Download and verify Bitcoin Core
-
-Download the Bitcoin Core installer from bitcoin.org/download and  store it in the directory you want to use to download the blockchain. To  check the authenticity of the program, we calculate its checksum and  compare it with the checksums provided.
-
-In Windows, I’ll preface all commands you need to enter with `>` , so with the command `> cd bitcoin` , just enter `cd bitcoin` and hit enter.
-
-Open the Windows command prompt (`Win+R`, enter `cmd`, hit `Enter`), navigate to the bitcoin directory (for me, it's on drive `D:`, check in Windows Explorer) and create the new directory `bitcoin_mainnet`. Then calculate the checksum of the already downloaded program.
-
-```
-> G:
-> cd \bitcoin
-> mkdir bitcoin_mainnet
-> dir
-> certutil -hashfile bitcoin-0.16.0-win64-setup.exe sha256
-6d93ba3b9c3e34f74ccfaeacc79f968755ba0da1e2d75ce654cf276feb2aa16d
-```
-
-[![Windows Command Prompt: verify checksum](https://github.com/Stadicus/guides/raw/master/raspibolt/images/10_blockchain_wincheck.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/10_blockchain_wincheck.png)
-
-Compare this value with the [release signatures](https://bitcoin.org/bin/bitcoin-core-0.16.0/SHA256SUMS.asc). For the Windows v0.16.0 binaries, its
-
-```
-32 bit:  7558249b04527d7d0bf2663f9cfe76d6c5f83ae90e513241f94fda6151396a29
-64 bit:  6d93ba3b9c3e34f74ccfaeacc79f968755ba0da1e2d75ce654cf276feb2aa16d
-```
-
-Usually, you would also need to check the signature of this file, but  it's a pain on Windows, so we will do it on the Pi later on.
-
-### Installing Bitcoin Core
-
-Execute the Bitcoin Core installation file (you might need to  right-click and choose "Run as administrator") and install it using the  default settings. Start the program `bitcoin-qt.exe` in the directory "C:\Program Files\Bitcoin". Choose your new “bitcoin_mainnet” folder as the custom data directory.
-
-[![Bitcoin Core directory selection](https://github.com/Stadicus/guides/raw/master/raspibolt/images/10_bitcoinqt_directory.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/10_bitcoinqt_directory.png)
-
-Bitcoin Core opens and starts immediately syncing the blockchain.  Now, we need to set one **very important** additional setting in the  “bitcoin.conf” file. If not set, the the whole blockchain will be useless and needs to be revalidated! Using the menu, open `Settings` / `Options` and click the button `Open Configuration File`. Enter the following line:
-
-```
-txindex=1
-```
-
-If your computer has a lot of memory, you can increase the database in-memory cache by adding the following line (with megabytes of memory  to use, adjusted to your computer) as well:
-
-```
-dbcache=6000
-```
-
-Save and close the text file, quit Bitcoin Core using `File` / `Exit` and restart the program. The program will start syncing again.
-
-Let the blockchain sync for now, we can already start working on the Thundroid.
-
-  
 
 ## 2) Working on your Thundroid
 
@@ -188,19 +112,17 @@ Everything is configured on the Linux command prompt. Throughout this guide I us
 $ command            This is a single-line command to enter (without the $) 
                      and confirm with the enter key
 
-No prefix            This is either an output of the command above
-                     or something you can copy/paste into a file
+No prefix or         This is either an output of the command above
+>                    or something you can copy/paste into a file
 ```
 
 * **Auto-complete commands**: When you enter commands, you can use the `Tab` key for auto-completion, eg. for commands, directories or filenames.
 * **Command history**: by pressing ⬆️ and ⬇️ on your keyboard, you can recall your previously entered commands.
-* **Common Linux commands**: For a very selective reference list of Linux commands, please refer to the [FAQ](https://github.com/Stadicus/guides/blob/master/raspibolt/raspibolt_faq.md) page.
-* **Use admin privileges**: Our regular user has no admin privileges. If a command needs to edit the system configuration, we need to use the `sudo` ("superuser do") command as prefix. Instead of editing a system file with `nano /etc/fstab`, we use `sudo nano /etc/fstab`.
-   For security reasons, the user "bitcoin" cannot use the `sudo` command.
+* **Use admin privileges**: Our users has no admin privileges. If a command needs to edit the system configuration, we need to use the `sudo` ("superuser do") command as prefix. Instead of editing a system file with `nano /etc/fstab`, we use `sudo nano /etc/fstab`.
 * **Using the Nano text editor**: We use the Nano editor  to create new text files or edit existing ones. It's not complicated,  but to save and exit is not intuitive.
   * Save: hit `Ctrl-O` (for Output), confirm the filename, and hit the `Enter` key
   * Exit: hit `Ctrl-X`
-* **Copy / Paste**: If you are using Windows and the PuTTY  SSH client, you can copy text from the shell by selecting it with your  mouse (no need to click anything), and paste stuff at the cursor  position with a right-click anywhere in the ssh window.
+* **Copy / Paste**: If you are using Windows and the PuTTY SSH client, you can copy text from the shell by selecting it with your  mouse (no need to click anything), and paste stuff at the cursor  position with a right-click anywhere in the ssh window.
 
 ### Connecting to Thundroid
 
@@ -247,25 +169,12 @@ When using the Nano text editor, you can use the same keyboard shortcuts  to sav
 $ nano /etc/hostname
 $ nano /etc/hosts
 
-# disable Swap file (this would degrade the MicroSD card)
-$ swapoff --all
-
-# create user "admin" and change password to [password A]
-$ useradd -m admin
+# create user "admin", set [password A] and make it a superuser
+$ adduser admin
 $ adduser admin sudo
-$ passwd admin
-```
 
-### Adding the service user “bitcoin”
-
-The bitcoin and lightning processes will run in the background (as  daemon) and use the separate user “bitcoin” for security reasons. This  user does not have admin rights and cannot change the system  configuration.
-
-* Enter the following command, set your `password [A]` and confirm all questions with the enter/ key.  
-
-```
-# create user "bitcoin" and change password to [password C]
-$ useradd -m bitcoin
-$ passwd bitcoin
+# create user "bitcoin" and set password [password A]
+$ sudo adduser bitcoin
 ```
 
 ### Mounting the hard disk
@@ -284,7 +193,7 @@ $ mkfs.ext4 /dev/[NAME]
 # get UUID for hard disk, copy into notepad
 $ lsblk -o UUID,NAME,FSTYPE,SIZE,LABEL,MODEL
 
-# edit fstab and enter new line (replace UUID) at the end 
+# edit fstab and enter new line (replace UUID) at the end, save & exit
 $ nano /etc/fstab
 UUID=123456 /mnt/hdd ext4 noexec,defaults 0 0
 
@@ -296,23 +205,19 @@ Filesystem     1K-blocks      Used Available Use% Mounted on
 /dev/sda1      961300808 600388836 312057600  66% /mnt/hdd
 
 $ chown bitcoin:bitcoin /mnt/hdd/
-
-# make sure user "admin" uses bash as standard shell
-$ sudo chsh admin -s /bin/bash
-# restart
-$ shutdown -r now
 ```
 
 ### Moving the Swap File
 
 The usage of a swap file can degrade the SD card very quickly. Therefore, we will move it to the external hard disk.
 
-* Edit the configuration file and replace existing entries with the ones below. Save and exit.
-   `$ sudo nano /etc/dphys-swapfile`
+* Install the necessary package (that can take a few minutes)
+  `$ apt install dphys-swapfile`
+* Edit the configuration file and set the correct swapfile path on the external hard disk as as shown below. Save and exit.
+   `$ nano /etc/dphys-swapfile`
 
 ```
 CONF_SWAPFILE=/mnt/hdd/swapfile
-CONF_SWAPSIZE=1000
 ```
 
 * Delete the old swap file
@@ -321,6 +226,9 @@ CONF_SWAPSIZE=1000
 * Enable new swap configuration
    `$ sudo dphys-swapfile setup`  
    `$ sudo dphys-swapfile swapon`
+* Restart your Thundroid, login as user "admin" and delete the old swapfile  
+  `$ restart shutdown -r now`  
+  `$ sudo rm /var/swap`
 
 ## 3) Hardening your Thundroid
 
@@ -330,28 +238,22 @@ Login as “admin” (we will not use “root” again).
 
 The line `ufw allow from 192.168.0.0/24…` below assumes that the IP address of your Pi is something like `192.168.0.???`, the ??? being any number from 0 to 255. If your IP address is `12.34.56.78`, you must adapt this line to `ufw allow from 12.34.56.0/24…`.
 
-### fail2ban
-
-Fail2ban monitors SSH login attempts and bans a remote peer after 5 unsuccessful tries for 10 minutes. This makes a brute-force attack unfeasible, as it would simply take too long. 
-
-```
-$ sudo apt install fail2ban
-```
-
 ### UFW: Uncomplicated Firewall
 
 The firewall denies all connection attempts from other peers by default and allows only specific ports to be used.
 
-The line `ufw allow from 192.168.0.0/24 …` below assumes that the IP address of your Pi is something like `192.168.0.???`, the ??? being any number from 0 to 255. If your IP address is `12.34.56.78`, you must adapt this line to `ufw allow from 12.34.56.**0**/24 …`.
+:warning: The line `ufw allow from 192.168.0.0/24 …` below assumes that the IP address of your Pi is something like `192.168.0.???`, the ??? being any number from 0 to 255. If your IP address is `12.34.56.78`, you must adapt this line to `ufw allow from 12.34.56.0/24 …`. Otherwise you will lock yourself out for good.
 
 ```
 # change session to "root"
 $ sudo su
-
 $ apt install ufw
 $ ufw default deny incoming
 $ ufw default allow outgoing
+
+# make sure to use the correct subnet mask (see warning above)
 $ ufw allow from 192.168.0.0/24 to any port 22 comment 'allow SSH from local LAN'
+
 $ ufw allow 9735 comment 'allow Lightning'
 $ ufw deny 8333 comment  'deny Bitcoin mainnet'
 $ ufw allow 18333 comment 'allow Bitcoin testnet'
@@ -363,12 +265,21 @@ $ ufw status
 $ exit
 ```
 
+### fail2ban
+
+Fail2ban monitors SSH login attempts and bans a remote peer after 5 unsuccessful tries for 10 minutes. This makes a brute-force attack unfeasible, as it would simply take too long. 
+
+```
+$ sudo apt install fail2ban
+```
+
 ### SSH Keys
 
 One of the best options to secure the SSH login is to completely  disable the password login and require a SSH key certificate. Only  someone with physical possession of the private key can login.
 
-* Set up SSH keys for the "admin" user:
-   [Configure “No Password SSH Keys Authentication” with PuTTY on Linux Servers](https://www.tecmint.com/ssh-passwordless-login-with-putty)
+* Set up SSH keys for the "admin" user by following this article:
+  *Configure “No Password SSH Keys Authentication” with PuTTY on Linux Servers*  
+  [https://www.tecmint.com/ssh-passwordless-login-with-putty]
 
 You should now generated three files. Keep them safe, we will now disable the password login. [![SSH keys files](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_ssh_keys_filelist.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_ssh_keys_filelist.png)
 
@@ -429,7 +340,7 @@ session required pam_limits.so
 
 The base of the Lightning node is a fully trustless [Bitcoin Core](https://bitcoin.org/en/bitcoin-core/)  node. It keeps a complete copy of the blockchain and validates all  transactions and blocks. By doing all this work ourselves, nobody else  needs to be trusted.
 
-In the beginning, we will use the Bitcoin testnet to familiarize  ourselves with its operations. This sync is handled directly by the Pi  and should not take longer than a few hours. Just let it sync overnight.
+In the beginning, we will use the Bitcoin testnet to familiarize  ourselves with its operations. This sync is handled directly by the Thundroid and should not take longer than a few hours. Just let it sync overnight.
 
 ### Installation
 
@@ -703,7 +614,7 @@ autopilot.allocation=0.6
    `$ sudo nano /etc/systemd/system/lnd.service`
 
 ```
-# RaspiBolt LND Mainnet: systemd unit for lnd
+# Thundroid: systemd unit for lnd
 # /etc/systemd/system/lnd.service
 
 [Unit]
@@ -711,14 +622,8 @@ Description=LND Lightning Daemon
 Wants=bitcoind.service
 After=bitcoind.service
 
-# for use with sendmail alert
-#OnFailure=systemd-sendmail@%n
-
 [Service]
-# get var PUBIP from file
-EnvironmentFile=/run/publicip
-
-ExecStart=/usr/local/bin/lnd --externalip=${PUBLICIP}
+ExecStart=/usr/local/bin/lnd --externalip=[your_pub_IP]
 PIDFile=/home/bitcoin/.lnd/lnd.pid
 User=bitcoin
 Group=bitcoin
@@ -1040,24 +945,82 @@ There are a lot of great resources to explore the Lightning mainnet in regard to
 
 
 
-#### Considerations for Bitcoin mainnet
-
-This guide is configured to use the Bitcoin testnet. You can easily download and verify the blockchain using the Odroid HC2. However, for a switch to Bitcoin mainnet, will will need to initially download and verify the Bitcoin blockchain on a regular computer (only once, not regularly).
-
-There are multiple options (not covered in this guide) to transfer the mainnet blockchain (~200 GB) to your node:
-
-* connect your internal hard disk directly to your computer,
-* transfer the blockchain over the network
-* use an additional external hard disk to transfer the data via USB.
-
-We are going to format the internal hard disk using the Ext4 file system, which is not compatible with windows. If you want to connect the hard disk later to a windows computer, you need [additional software](http://www.paragon-drivers.com/extfs-windows/) (free for once-time-usage).
-
-#### Assemble the hardware
-
-Assembly is easy, just enter the hard disk and fix it with the the screws included with your Odroid. If you ordered the plastic case, just slide it over the metal body.
-
 ---
 
-Now, apart from a few quirks, you can follow the [generic Ubuntu 16.04 guide](README.md).
+## Outlook: Prepare for Bitcoin mainnet
 
----
+
+
+
+
+
+
+The Bitcoin blockchain records all transactions and basically defines  who owns how many bitcoin. This is the most crucial of all information  and we should not rely on someone else to provide this data. To set up  our Bitcoin Full Node on mainnet, we need to
+
+* download the whole blockchain (~ 200 GB),
+* verify every Bitcoin transaction that ever occurred and every block ever mined,
+* create an index database for all transactions, so that we can query it later on,
+* calculate all bitcoin address balances (called the UTXO set).
+
+👉 See [Running a Full Node](https://bitcoin.org/en/full-node) for additional information.
+
+Although we will set up the RaspiBolt for the Bitcoin testnet first,  the validation of the Bitcoin mainnet blockchain can take several days.  This is the reason why we already start this task now.
+
+### Using a regular computer
+
+You can imagine that the Raspberry Pi is not quite up to this huge  task. The download is not the problem, but to initially process the  whole blockchain would take weeks due to its low computing  power and lack of memory. We need to download and verify the blockchain  with Bitcoin Core on a regular computer, and then transfer the data to  the Pi. This needs to be done only once. After that the Pi can easily  keep up with new blocks.
+
+This guide assumes that you will use a  Windows machine for this  task, but it works with most operating systems. You need to have about  250 GB free disk space available, internally or on an external hard disk. As indexing creates heavy  read/write traffic, the faster your hard disk the better. An internal  drive or an external USB3 hard disk will be significantly faster than  one with a USB2 connection.
+
+* **Recommended**: The best configuration is to format the  external hard disk of the Pi with the Ext4 file system, which is better  suited for our use case. Using SPC, we then copy the blockchain from  the Windows computer over the local network.
+* **Or**, if you want to use an external hard disk for  your Pi that already contains data, eg. because you already downloaded  the blockchain, this works as well. You can use the disk as is, but need  to skip the formatting part later in this guide.
+
+### Download and verify Bitcoin Core
+
+Download the Bitcoin Core installer from bitcoin.org/download and  store it in the directory you want to use to download the blockchain. To  check the authenticity of the program, we calculate its checksum and  compare it with the checksums provided.
+
+In Windows, I’ll preface all commands you need to enter with `>` , so with the command `> cd bitcoin` , just enter `cd bitcoin` and hit enter.
+
+Open the Windows command prompt (`Win+R`, enter `cmd`, hit `Enter`), navigate to the bitcoin directory (for me, it's on drive `D:`, check in Windows Explorer) and create the new directory `bitcoin_mainnet`. Then calculate the checksum of the already downloaded program.
+
+```
+> G:
+> cd \bitcoin
+> mkdir bitcoin_mainnet
+> dir
+> certutil -hashfile bitcoin-0.16.0-win64-setup.exe sha256
+6d93ba3b9c3e34f74ccfaeacc79f968755ba0da1e2d75ce654cf276feb2aa16d
+```
+
+[![Windows Command Prompt: verify checksum](https://github.com/Stadicus/guides/raw/master/raspibolt/images/10_blockchain_wincheck.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/10_blockchain_wincheck.png)
+
+Compare this value with the [release signatures](https://bitcoin.org/bin/bitcoin-core-0.16.0/SHA256SUMS.asc). For the Windows v0.16.0 binaries, its
+
+```
+32 bit:  7558249b04527d7d0bf2663f9cfe76d6c5f83ae90e513241f94fda6151396a29
+64 bit:  6d93ba3b9c3e34f74ccfaeacc79f968755ba0da1e2d75ce654cf276feb2aa16d
+```
+
+Usually, you would also need to check the signature of this file, but  it's a pain on Windows, so we will do it on the Pi later on.
+
+### Installing Bitcoin Core
+
+Execute the Bitcoin Core installation file (you might need to  right-click and choose "Run as administrator") and install it using the  default settings. Start the program `bitcoin-qt.exe` in the directory "C:\Program Files\Bitcoin". Choose your new “bitcoin_mainnet” folder as the custom data directory.
+
+[![Bitcoin Core directory selection](https://github.com/Stadicus/guides/raw/master/raspibolt/images/10_bitcoinqt_directory.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/10_bitcoinqt_directory.png)
+
+Bitcoin Core opens and starts immediately syncing the blockchain.  Now, we need to set one **very important** additional setting in the  “bitcoin.conf” file. If not set, the the whole blockchain will be useless and needs to be revalidated! Using the menu, open `Settings` / `Options` and click the button `Open Configuration File`. Enter the following line:
+
+```
+txindex=1
+```
+
+If your computer has a lot of memory, you can increase the database in-memory cache by adding the following line (with megabytes of memory  to use, adjusted to your computer) as well:
+
+```
+dbcache=6000
+```
+
+Save and close the text file, quit Bitcoin Core using `File` / `Exit` and restart the program. The program will start syncing again.
+
+Let the blockchain sync for now, we can already start working on the Thundroid.
