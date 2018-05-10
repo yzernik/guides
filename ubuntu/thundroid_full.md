@@ -8,7 +8,7 @@ Bitcoin is a native digital currency for the internet age. It can be thought of 
 
 > A purely peer-to-peer version of electronic cash [which] would allow online payments to be sent directly from one party to another without going through a financial institution. 
 
-Being peer-too-peer means that Bitcoin does not rely on a middleman (eg. a bank) and can be transfered as a bearer asset, like physical cash, without asking anyone for permission. With the added benefit that it does not need to be stored physically, as it is secured by a cryptographic key, and can be transferred within minutes to anyone anywhere in the world. One key component of this free open-source financial system is the blockchain, the ledger that keeps track of who owns how many bitcoin and that is stored as an identical copy by all users that decide to run a full Bitcoin node. (Learn more on [bitcoin.org](https://bitcoin.org))
+Being peer-too-peer means that **Bitcoin** does not rely on a middleman (eg. a bank) and can be transfered as a bearer asset, like physical cash, without asking anyone for permission. With the added benefit that it does not need to be stored physically, as it is secured by a cryptographic key, and can be transferred within minutes to anyone anywhere in the world. One key component of this free open-source financial system is the blockchain, the ledger that keeps track of who owns how many bitcoin and that is stored as an identical copy by all users that decide to run a full Bitcoin node. (Learn more on [bitcoin.org](https://bitcoin.org))
 
 Bitcoin is a economic experiment of epic scope, and its success is by no means certain. In any case, *Bitcoin as a new technology* is an incredibly interesting endeavor, especially because of its interdisciplinary nature and the very low barriers to entry. *Bitcoin as sound money*, being scarce and non-inflationary, challenging money as one of the last true monopolies of nation states, could have a major impact on economic principles and society as a whole. 
 
@@ -356,7 +356,7 @@ We will download the software directly from bitcoin.org, verify its signature to
 
 We download the latest Bitcoin Core binaries (the application) and  compare the file with the signed checksum. This is a precaution to make  sure that this is an official release and not a malicious version trying  to steal our money.
 
-Get the latest download links at bitcoin.org/en/download, they change  with each update. Then run the following  commands (with adjusted  filenames) and check the output where indicated.
+Get the latest download links at [bitcoin.org/en/download](), they change  with each update. Then run the following  commands (with adjusted  filenames) and check the output where indicated.
 
 ```
 # download Bitcoin Core binary
@@ -416,7 +416,7 @@ The content of this directory will actually be  on the external hard disk.
 
 ### Configuration
 
-Now, the configuration file for bitcoind needs to be created. Open it  with Nano and paste the configuration below . Save and exit.
+Now, the configuration file for bitcoind needs to be created. Open it  with Nano and paste the configuration below . Save and exit.  
  `$ nano /home/bitcoin/.bitcoin/bitcoin.conf`
 
 ```
@@ -454,10 +454,8 @@ The system needs to run the bitcoin daemon automatically in the  background, eve
 
 * Exit the “bitcoin” user session back to user “admin”  
    `$ exit`
-* Create the configuration file in the Nano text editor and copy the following paragraph.  Save and exit. 
+* Create the configuration file in the Nano text editor and copy the following paragraph.  Save and exit.  
    `$ sudo nano /etc/systemd/system/bitcoind.service`
-
-Content of the file *bitcoind.service*:
 
 ```
 # Thundroid: systemd unit for bitcoind
@@ -515,31 +513,22 @@ After rebooting, the bitcoind should start and begin to sync and validate the Bi
 
 * Wait a bit, reconnect via SSH and login with the user “admin”.
 
-* Check the status of the bitcoin daemon that was started by systemd (exit with `Ctrl-C`)
-
+* Check the status of the bitcoin daemon that was started by systemd (exit with `Ctrl-C`)  
   `$ systemctl status bitcoind.service`
 
 [![Bitcoind status ](https://github.com/Stadicus/guides/raw/master/raspibolt/images/30_status_bitcoind.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/30_status_bitcoind.png)
 
-* See bitcoind in action by monitoring its log file (exit with `Ctrl-C`)
+* See bitcoind in action by monitoring its log file (exit with `Ctrl-C`)  
    `$ sudo tail -f /home/bitcoin/.bitcoin/testnet3/debug.log`
 
-* Use the Bitcoin Core client `bitcoin-cli` to get information about the current blockchain
+* Use the Bitcoin Core client `bitcoin-cli` to get information about the current blockchain  
    `$ bitcoin-cli getblockchaininfo`
-
-* Check public visibility of your node:
-
-  ```
-  $ curl -sL https://bitnodes.earn.com/api/v1/nodes/me-18333/ | jq
-  {
-    "success": true
-  }
-  ```
 
 * Please note:
 
   * When “bitcoind” is still starting, you may get an error message like  “verifying blocks”. That’s normal, just give it a few minutes.
   * Among other infos, the “verificationprogress” is shown. Once this  value reaches almost 1 (0.999…), the blockchain is up-to-date and fully  validated.
+
 
 ------
 
@@ -584,17 +573,17 @@ $ lnd --version
 
 Now that LND is installed, we need to configure it to work with Bitcoin Core and run automatically on startup.
 
-* Open a "bitcoin" user session
+* Open a "bitcoin" user session  
    `$ sudo su bitcoin`
-* Create the LND working directory and the corresponding symbolic link
-   `$ mkdir /mnt/hdd/lnd`
-   `$ ln -s /mnt/hdd/lnd /home/bitcoin/.lnd`
-   `$ cd`
+* Create the LND working directory and the corresponding symbolic link  
+   `$ mkdir /mnt/hdd/lnd`  
+   `$ ln -s /mnt/hdd/lnd /home/bitcoin/.lnd`  
+   `$ cd`  
    `$ ls -la`
 
 [![Check symlink LND](https://github.com/Stadicus/guides/raw/master/raspibolt/images/40_symlink_lnd.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/40_symlink_lnd.png)
 
-* Create the LND configuration file and paste the following content (adjust to your alias). Save and exit.
+* Create the LND configuration file and paste the following content (adjust to your alias). Save and exit.  
    `$ nano /home/bitcoin/.lnd/lnd.conf`
 
 ```
@@ -658,7 +647,7 @@ RestartSec=60
 WantedBy=multi-user.target
 ```
 
-* enable and start LND
+* enable and start LND  
    `$ sudo systemctl enable lnd`  
    `$ sudo systemctl start lnd`  
    `$ systemctl status lnd`
@@ -669,7 +658,7 @@ WantedBy=multi-user.target
 
 ### LND wallet setup
 
-Once LND is started, thlncle process waits for us to create the integrated Bitcoin wallet (it does not use the bitcoind wallet).
+Once LND is started, the process waits for us to create the integrated Bitcoin wallet (it does not use the bitcoind wallet).
 
 * Start a "bitcoin" user session  
    `$ sudo su bitcoin`
@@ -679,11 +668,11 @@ Once LND is started, thlncle process waits for us to create the integrated Bitco
 
 [![LND new cipher seed](https://github.com/Stadicus/guides/raw/master/raspibolt/images/40_cipher_seed.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/40_cipher_seed.png)
 
-These 24 words, combined with your passphrase (optional `password [D]`)   is all that you need to restore your Bitcoin wallet and all Lighting  channels. The current state of your channels, however, cannot be  recreated from this seed, this requires a continuous backup and is still  under development for LND.
+These 24 words, combined with your passphrase (optional `password [D]`)   is all that you need to restore your Bitcoin wallet and all Lighting  channels. The current state of your channels, however, cannot be  recreated from this seed, this is still  under development for LND.
 
 ⚠️ This information must be kept secret at all times. **Write these 24 words down manually on a piece of paper and store it in a safe place.**  This piece of paper is all an attacker needs to completely empty your  wallet! Do not store it on a computer. Do not take a picture with your  mobile phone. **This information should never be stored anywhere in digital form.**
 
-* exit "bitcoin" user session
+* exit "bitcoin" user session  
    `$ exit`
 
 ### Assign LND permissions to "admin"
@@ -708,14 +697,14 @@ These 24 words, combined with your passphrase (optional `password [D]`)   is all
 
 Now your Lightning node is ready. To use it in testnet, you can get some free testnet bitcoin from a faucet.
 
-* Generate a new Bitcoin address to receive funds on-chain
-   `$ lncli newaddress np2wkh`
+* Generate a new Bitcoin address to receive funds on-chain  
+   `$ lncli newaddress np2wkh`  
    `> "address": "2NCoq9q7............dkuca5LzPXnJ9NQ"`
-* Get testnet bitcoin:
+* Get testnet bitcoin:  
    <https://testnet.manu.backend.hamburg/faucet>
-* Check your LND wallet balance
+* Check your LND wallet balance  
    `$ lncli walletbalance`
-* Monitor your transaction (the faucet shows the TX ID) on a Blockchain explorer:
+* Monitor your transaction (the faucet shows the TX ID) on a Blockchain explorer:  
    <https://testnet.smartbit.com.au>
 
 ### LND in action
