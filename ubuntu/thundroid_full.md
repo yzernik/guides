@@ -14,7 +14,7 @@ Bitcoin is a economic experiment of epic scope, and its success is by no means c
 
 At the moment, Bitcoin is more a *store of value* and not really suited for small everyday transactions. Truly decentralized blockchains are a scarce resource and cannot scale to accommodate all global transactions. If you think about it, it cannot be good practice to store every coffee purchase redundantly all over the world for all eternety. That would be like forcing everyone to download everyone elses emails as well. These limitations are a great motivator to build better technology on top of the Bitcoin blockchain to scale exponentially, as opposed to just making everything bigger for linear scaling.
 
-This is where the **Lightning Network** comes in. As one of several new blockchain “extensions”, its promise is to accommodate nearly unlimited transactions, with instant confirmation, minimal fees and increased privacy. It sounds almost too good to be true, but this technology is well researched, committed to the cypherpunk open-source ethos and leverages the solid underpinnings of Bitcoin. (Learn more: [bit.ly/2vWO8Yf](https://bit.ly/2vWO8Yf))
+This is where the **Lightning Network** comes in. As one of several new blockchain “extensions”, its promise is to accommodate nearly unlimited transactions, with instant confirmation, minimal fees and increased privacy. It sounds almost too good to be true, but this technology is well researched, committed to the cypherpunk open-source ethos and leverages the solid underpinnings of Bitcoin. (Learn more: [Bitcoin Magazine article series](https://bitcoinmagazine.com/articles/understanding-the-lightning-network-part-building-a-bidirectional-payment-channel-1464710791/))
 
 To preserve the decentralized nature of this monetary system, it is important that everybody has at least the possibility to run their own trustless Bitcoin node, preferably on cheap hardware like Odroid.
 
@@ -72,7 +72,7 @@ I ordered the following items directly with Hardkernel in Singapore. There are [
 
 You also need the following:
 
-* Micro SD card: 8 GB or more, incl. adapter to your regular computer
+* Micro SD card: 16 GB, incl. adapter to your regular computer
 * Internal hard disk: 500 GB or more, SATA, 3.5" hdd, or 2.5" hdd/ssd
 * Network RJ45 cable
 
@@ -129,11 +129,11 @@ No prefix or         This is either an output of the command above
 
 ### Connecting to Thundroid
 
-Now it’s time to connect to the Pi via SSH and get to work. For that, a  Secure Shell (SSH) client is needed. Install, start and connect: 
+Now it’s time to connect via SSH and get to work. For that, a  Secure Shell (SSH) client is needed. Install, start and connect: 
 
 * **Windows**: I recommend to use the SSH client [KiTTY](http://kitty.9bis.com). You can **copy** text from the shell by selecting it with your mouse (no need to click anything), and **paste** stuff with a right-click.
 * **Mac OS**: built-in SSH client (see [this article](http://osxdaily.com/2017/04/28/howto-ssh-client-mac/)) 
-* **Linux**: just use the native command, eg. `ssh pi@192.168.0.20` 
+* **Linux**: just use the native command, eg. `ssh root@192.168.0.20` 
 
 Use the following SSH connection settings:
 
@@ -278,17 +278,16 @@ $ sudo apt install fail2ban
 
 One of the best options to secure the SSH login is to completely  disable the password login and require a SSH key certificate. Only  someone with physical possession of the private key can login.
 
-* Set up SSH keys for the "admin" user by following this article:  
-  *Configure “No Password SSH Keys Authentication” with PuTTY on Linux Servers*  
+* Set up SSH keys for the "admin" user by following this article:  *Configure “No Password SSH Keys Authentication” with PuTTY on Linux Servers*  
   https://www.tecmint.com/ssh-passwordless-login-with-putty
 
-You should now generated three files. Keep them safe, we will now disable the password login. [![SSH keys files](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_ssh_keys_filelist.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_ssh_keys_filelist.png)
+You should now generated three files. Keep them safe, we will now disable the password login. ![SSH Keys filelist](images/ssh_keys_filelist.png)
 
 * Logout (`exit`) and make sure that you can log in as "admin" with your SSH key
 * Edit ssh config file
    `$ sudo nano /etc/ssh/sshd_config`
 * Change settings "ChallengeResponseAuthentication" and  "PasswordAuthentication" to "no" (uncomment the line by removing # if  necessary), save and exit  
-   [![SSH config](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_ssh_config.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_ssh_config.png)
+   ![SSH config](images/20_ssh_config.png)
 
 ```
 # copy the ssh key to user "root", just in case
@@ -322,21 +321,21 @@ root soft nofile 128000
 root hard nofile 128000
 ```
 
-[![Edit pam.d/limits.conf](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_nofile_limits.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_nofile_limits.png)
+![Edit pam.d/limits.conf](images/20_nofile_limits.png)
 
 ```
 $ sudo nano /etc/pam.d/common-session
 session required pam_limits.so
 ```
 
-[![Edit pam.d/common-session](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_nofile_common-session.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_nofile_common-session.png)
+![](images/20_nofile_common-session.png)
 
 ```
 $ sudo nano /etc/pam.d/common-session-noninteractive
 session required pam_limits.so
 ```
 
-[![Edit pam.d/common-session-noninteractive](https://github.com/Stadicus/guides/raw/master/raspibolt/images/20_nofile_common-session-noninteractive.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/20_nofile_common-session-noninteractive.png)
+![Edit pam.d/common-session-noninteractive](images/20_nofile_common-session-noninteractive.png)
 
 ------
 
@@ -381,9 +380,7 @@ $ gpg --verify SHA256SUMS.asc
 > Primary key fingerprint: 01EA 5486 DE18 A882 D4C2 6845 90C8 019E 36C2 E964
 ```
 
-[![commands to check bitcoind signature](https://github.com/Stadicus/guides/raw/master/raspibolt/images/30_checksum.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/30_checksum.png)
-
-
+![commands to check bitcoind signature](/images/30_verify_signature.png)
 
 Extract the Bitcoin Core binaries, install them and check the version. 
 
@@ -412,7 +409,7 @@ $ ls -la
 ```
 
 The content of this directory will actually be  on the external hard disk.
-[![verify .bitcoin symlink](https://github.com/Stadicus/guides/raw/master/raspibolt/images/30_show_symlink.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/30_show_symlink.png)
+![verify .bitcoin symlink](images/30_symlink_bitcoin.png)
 
 ### Configuration
 
@@ -514,9 +511,9 @@ After rebooting, the bitcoind should start and begin to sync and validate the Bi
 * Wait a bit, reconnect via SSH and login with the user “admin”.
 
 * Check the status of the bitcoin daemon that was started by systemd (exit with `Ctrl-C`)  
-  `$ systemctl status bitcoind.service`
+  `$ systemctl status bitcoind`
 
-[![Bitcoind status ](https://github.com/Stadicus/guides/raw/master/raspibolt/images/30_status_bitcoind.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/30_status_bitcoind.png)
+![Bitcoind status ](images/30_status_bitcoin.png)
 
 * See bitcoind in action by monitoring its log file (exit with `Ctrl-C`)  
    `$ sudo tail -f /home/bitcoin/.bitcoin/testnet3/debug.log`
@@ -528,7 +525,6 @@ After rebooting, the bitcoind should start and begin to sync and validate the Bi
 
   * When “bitcoind” is still starting, you may get an error message like  “verifying blocks”. That’s normal, just give it a few minutes.
   * Among other infos, the “verificationprogress” is shown. Once this  value reaches almost 1 (0.999…), the blockchain is up-to-date and fully  validated.
-
 
 ------
 
@@ -559,7 +555,11 @@ $ gpg --import ./pgp_keys.asc
 $ gpg --verify manifest-v0.4.1-beta.txt.sig
 > gpg: Good signature from "Olaoluwa Osuntokun <laolu32@gmail.com>" [unknown]
 > Primary key fingerprint: 6531 7176 B685 7F98 834E  DBE8 964E A263 DD63 7C21
+```
 
+![Checksum LND](images/40_checksum_lnd.png)
+
+```
 $ tar -xzf lnd-linux-arm-v0.4.1-beta.tar.gz
 $ ls -la
 $ sudo install -m 0755 -o root -g root -t /usr/local/bin lnd-linux-arm-v0.4.1-beta/*
@@ -567,7 +567,7 @@ $ lnd --version
 > lnd version 0.4.1-beta commit=
 ```
 
-[![Checksum LND](https://github.com/Stadicus/guides/raw/master/raspibolt/images/40_checksum_lnd.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/40_checksum_lnd.png)
+
 
 ### LND configuration
 
@@ -581,7 +581,7 @@ Now that LND is installed, we need to configure it to work with Bitcoin Core and
    `$ cd`  
    `$ ls -la`
 
-[![Check symlink LND](https://github.com/Stadicus/guides/raw/master/raspibolt/images/40_symlink_lnd.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/40_symlink_lnd.png)
+![Check symlink LND](images/40_symlink_lnd.png)
 
 * Create the LND configuration file and paste the following content (adjust to your alias). Save and exit.  
    `$ nano /home/bitcoin/.lnd/lnd.conf`
@@ -616,9 +616,6 @@ autopilot.allocation=0.6
 
 * exit the "bitcoin" user session back to "admin"  
    `$ exit`
-* Determine your external ip address, copy it into your notepad for later use  
-  `$ sudo apt install curl`   
-  `$ curl ipinfo.io/ip`
 * create LND systemd unit and with the following content. Save and exit.  
    `$ sudo nano /etc/systemd/system/lnd.service`
 
@@ -632,11 +629,11 @@ Wants=bitcoind.service
 After=bitcoind.service
 
 [Service]
-ExecStart=/usr/local/bin/lnd --externalip=[your_pub_IP]
+ExecStart=/usr/local/bin/lnd
 PIDFile=/home/bitcoin/.lnd/lnd.pid
 User=bitcoin
 Group=bitcoin
-LimitNOFILE=512000
+LimitNOFILE=128000
 Type=simple
 KillMode=process
 TimeoutSec=180
@@ -763,9 +760,9 @@ In part 2 of this guide we will move the Thundroid Bitcoin & Lightning node to t
 
 👉 See [Running a Full Node](https://bitcoin.org/en/full-node) for additional information.
 
-You can imagine that the Thundroid is not quite up to this huge  task. The download is not the problem, but to initially process the  whole blockchain would take weeks due to its resource restrictions. We need to download and verify the blockchain  with Bitcoin Core on a regular computer, and then transfer the data to  the Thundroid. This needs to be done only once. After that the Thundroid can easily  keep up with new blocks.
+You can imagine that the Thundroid is not quite up to this huge  task. The download is not the problem, but to initially process the  whole blockchain would take weeks due to its resource restrictions. We need to download and verify the blockchain  with Bitcoin Core on a regular computer and then transfer the data to  the Thundroid. This needs to be done only once. After that the Thundroid can easily  keep up with new blocks.
 
-For the switch, the mainnet blockchain should be ready, so we'll already start this task now.
+For the switch to mainnet, the mainnet blockchain should be ready, so we'll already start this task now.
 
 ### Using a regular computer
 
@@ -788,7 +785,7 @@ Open the Windows command prompt (`Win+R`, enter `cmd`, hit `Enter`), navigate to
 6d93ba3b9c3e34f74ccfaeacc79f968755ba0da1e2d75ce654cf276feb2aa16d
 ```
 
-[![Windows Command Prompt: verify checksum](https://github.com/Stadicus/guides/raw/master/raspibolt/images/10_blockchain_wincheck.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/10_blockchain_wincheck.png)
+![Windows Command Prompt: verify checksum](images/10_blockchain_wincheck.png)
 
 You can check this checksums with the the reference checksums on your Thundroid, from the file we downloaded previously and have already checked for authenticity. Compare the following output with  the checksum of your Windows Bitcoin Core download. 
 
@@ -806,7 +803,7 @@ $ cat /home/admin/download/SHA256SUMS.asc | grep win
 
 Execute the Bitcoin Core installation file (you might need to  right-click and choose "Run as administrator") and install it using the  default settings. Start the program `bitcoin-qt.exe` in the directory "C:\Program Files\Bitcoin". Choose your new “bitcoin_mainnet” folder as the custom data directory.
 
-[![Bitcoin Core directory selection](https://github.com/Stadicus/guides/raw/master/raspibolt/images/10_bitcoinqt_directory.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/10_bitcoinqt_directory.png)
+![Bitcoin Core directory selection](images/10_bitcoinqt_directory.png)
 
 Bitcoin Core opens and starts immediately syncing the blockchain.  Now, we need to set one **very important** additional setting in the  “bitcoin.conf” file. If not set, the the whole blockchain will be useless and needs to be re-validated! Using the menu, open `Settings` / `Options` and click the button `Open Configuration File`. Enter the following line:
 
@@ -830,7 +827,7 @@ Let the blockchain sync for now, this will take a day or two.
 
 In part 2 of this guide, we will transition to the Bitcoin mainnet. This will be the point of no return. Up until now, you can just start  over. Experiment with testnet bitcoin. Open and close channels on the  testnet. It's important that you feel comfortable with Thundroid operations, before putting real money on the line.
 
-Once you switch to mainnet and send real bitcoin to your RaspiBolt, you have "skin in the game".
+Once you switch to mainnet and send real bitcoin to your Thundroid, you have "skin in the game".
 
 * Make sure your RaspiBolt is working as expected.
 * Get a some practice with `bitcoin-cli` and its options (see [Bitcoin Core RPC documentation](https://bitcoin-rpc.github.io/))
