@@ -651,7 +651,7 @@ WantedBy=multi-user.target
 * monitor the LND logfile in realtime (exit with `Ctrl-C`)  
    `$ sudo journalctl -f -u lnd`
 
-[![LND startup log](https://github.com/Stadicus/guides/raw/master/raspibolt/images/40_start_lnd.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/40_start_lnd.png)
+![LND startup log](images/40_start_lnd.png)
 
 ### LND wallet setup
 
@@ -663,7 +663,7 @@ Once LND is started, the process waits for us to create the integrated Bitcoin w
   `$ lncli create`
 * If you want to create a new wallet, enter your `password [C]` as wallet password, select `n` regarding an existing seed and enter the optional `password [D]` as seed passphrase. A new cipher seed consisting of 24 words is created.
 
-[![LND new cipher seed](https://github.com/Stadicus/guides/raw/master/raspibolt/images/40_cipher_seed.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/40_cipher_seed.png)
+![LND new cipher seed](images/40_cipher_seed.png)
 
 These 24 words, combined with your passphrase (optional `password [D]`)   is all that you need to restore your Bitcoin wallet and all Lighting  channels. The current state of your channels, however, cannot be  recreated from this seed, this is still  under development for LND.
 
@@ -677,7 +677,7 @@ These 24 words, combined with your passphrase (optional `password [D]`)   is all
 * Check if permission files `admin.macaroon` and `readonly.macaroon` have been created (if not, see open LND issue [#890](https://github.com/lightningnetwork/lnd/issues/890)).
    `$ ls -la /home/bitcoin/.lnd/`
 
-[![Check macaroon](https://github.com/Stadicus/guides/raw/master/raspibolt/images/40_ls_macaroon.png)](https://github.com/Stadicus/guides/blob/master/raspibolt/images/40_ls_macaroon.png)
+![Check macaroon](images/40_ls_macaroon.png)
 
 * Copy permission files and TLS cert to user "admin" to use `lncli`  
    `$ mkdir /home/admin/.lnd`  
