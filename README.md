@@ -1,4 +1,2 @@
-### The RaspiBolt Guide is now available on GitHub Pages:
-https://stadicus.github.io/RaspiBolt/
-
-This repository contains all sources and is used for Issue tracking.
+# Umbrel Guide
+This guide contains additional information about Umbrel that is not already featured on the website.
