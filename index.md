@@ -31,7 +31,7 @@ This page is intended to answer your questions about Umbrel.
 
 1. Introduction (this page)
 1. [Troubleshooting](raspibolt_70_troubleshooting.md): debug your system if you have problems
-1. [FAQ](raspibolt_faq.md): frequently asked questions and further reading
+1. [FAQ](faq.md): frequently asked questions and further reading
 
 ## A word of caution
 Umbrel I still in beta and should not be considered secure.
