@@ -81,6 +81,26 @@ This can be done by configuring the DHCP-Client (on the Pi) to advertise a stati
 ## Does Umbrel support .....?
 Currently not, but the we are working on an application infrastructure, so third-party developers can add their own apps to Umbrel.
 
+
+## WiFi setup
+
+
+* Create a file `wpa_supplicant.conf` in the boot partition of the microSD card with the following content.
+  Note that the network name (ssid) and password need to be in double-quotes (like `psk="password"`)
+
+  ```conf
+  ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+  update_config=1
+  country=[COUNTRY_CODE]
+  network={
+    ssid="[WIFI_SSID]"
+    psk="[WIFI_PASSWORD]"
+  }
+  ```
+
+* Replace `[COUNTRY_CODE]` with the [ISO2 code](https://www.iso.org/obp/ui/#search){:target="_blank"} of your country (eg. `US`)
+* Replace `[WIFI_SSID]` and `[WIFI_PASSWORD]` with the credentials for your own WiFi.
+
 ------
 
 << Back: [Troubleshooting](raspibolt_70_troubleshooting.md)
