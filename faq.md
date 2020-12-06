@@ -1,7 +1,7 @@
 ---
 layout: default
 title: FAQ
-nav_order: 90
+nav_order: 10
 ---
 # Frequently Asked Questions
 {: .no_toc }
@@ -82,7 +82,7 @@ This can be done by configuring the DHCP-Client (on the Pi) to advertise a stati
 Currently not, but the we are working on an application infrastructure, so third-party developers can add their own apps to Umbrel.
 
 
-## WiFi setup
+## How can I use WiFi instead of Ethernet?
 
 
 * Create a file `wpa_supplicant.conf` in the boot partition of the microSD card with the following content.
