@@ -1,2 +1,3 @@
-# Umbrel Guide
-This guide contains additional information about Umbrel that is not already featured on the website.
+# UmbrelInfo
+
+This guide contains additional information about Umbrel that is not featured on their website.
