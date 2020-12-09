@@ -16,7 +16,7 @@ The aim of this additional troubleshooting guide is to help you debug your syste
 
 Where possible, I'll link to the relevant part of the guide. If you see any discrepancies from the expected output, double check how you set up your node in that specific area.
 
-### [General FAQ](raspibolt_faq.md)
+### [General FAQ](faq.md)
 
 You can find frequent questions not directly related with issues in a separate [General FAQ](raspibolt_faq.md) section:
 
