@@ -3,7 +3,7 @@ remote_theme: pmarsceill/just-the-docs
 search_enabled: true
 aux_links:
     "Contribute! Source on GitHub":
-      - "https://github.com/AaronDewes/UmbrelInfo/"
+      - "https://github.com/UmbrelInfo/UmbrelInfo.github.io/"
 
 # enable theme for local usage
 #theme: "just-the-docs"
