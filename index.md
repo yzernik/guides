@@ -35,4 +35,4 @@ This page is intended to answer your questions about Umbrel.
 
 ## A word of caution
 Umbrel I still in beta and should not be considered secure.
-We do not recommend running it on mainnet with real money yet.
+We do not recommend running it with much money yet.
