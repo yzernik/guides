@@ -10,6 +10,7 @@ nav_order: 1
 
 This page features additional information about Umbrel that can't be found on the official website.
 This page is intended to answer your questions about Umbrel.
+
 ---
 
  This page is not an official Umbrel page.
