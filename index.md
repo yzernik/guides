@@ -8,7 +8,7 @@ nav_order: 1
 ## Additional resources about Umbrel
 {: .no_toc }
 
-This page features additional information about Umbrel that can't be found on the official website yet.
+This page features additional information about Umbrel that can't be found on the official website.
 This page is intended to answer your questions about Umbrel.
 ---
 
@@ -30,8 +30,8 @@ This page is intended to answer your questions about Umbrel.
 ### Structure
 
 1. Introduction (this page)
-1. [Troubleshooting](troubleshooting.md): debug your system if you have problems
 1. [FAQ](faq.md): frequently asked questions and further reading
+1. [Troubleshooting](troubleshooting.md): debug your system if you have problems
 
 ## A word of caution
 Umbrel I still in beta and should not be considered secure.
