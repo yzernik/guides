@@ -18,7 +18,7 @@ Where possible, I'll link to the relevant part of the guide. If you see any disc
 
 ### [General FAQ](faq.md)
 
-You can find frequent questions not directly related with issues in a separate [General FAQ](raspibolt_faq.md) section:
+You can find frequent questions not directly related with issues in a separate [General FAQ](faq.md) section:
 
 * Can I get rich by routing Lightning payments?
 * Can I attach the Ext4 formatted hard disk to my Windows computer?
