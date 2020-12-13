@@ -102,5 +102,3 @@ Currently not, but the we are working on an application infrastructure, so third
 * Replace `[WIFI_SSID]` and `[WIFI_PASSWORD]` with the credentials for your own WiFi.
 
 ------
-
-<< Back: [Troubleshooting](raspibolt_70_troubleshooting.md)
