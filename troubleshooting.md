@@ -69,3 +69,6 @@ If you want to connect to your Umbrel over the local network just replace your o
 -----
 
 I will extend this troubleshooting guide constantly with findings that have been or will be reported in the issues section.
+
+-----
+
