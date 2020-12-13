@@ -49,19 +49,19 @@ Do you have connected anything to the GPIO pins?
 If yes, try to unplug it and reboot the RPi by unplugging the power supply and then plugging it back in.
 
 #### I can't access the dashboard at umbrel.local. What can I do?
-Check if your router detects your node
-If it does, try to access it with the IP address directly.
-If your router doesn't detect the node, either you ethernet cable isn't plugged in correctly or the node doesn't boot.
+Check if your router detects your node.
+If it doesn't, either you ethernet cable isn't plugged in correctly or the node doesn't boot.
 If you think the ethernet cable isn't the issue, follow the answer of the previous question.
-If you can't access the dashboard via the IP address either, try to disconnect the drive from the Raspberry Pi and plug it into the other USB port.
+
+
+If it does detect the node, try to access it with the IP address directly.
+If you can't access the dashboard via the IP address either,
+try to disconnect the drive from the Raspberry Pi and plug it into the other USB port.
 Then SSH into your node and run: `sudo systemctl start umbrel-external-storage`.
 After you've run the command, wait for two minutes, then run `sudo systemctl status umbrel-external-storage`.
 If the output of that command contains "Exiting the mount script without anything", the drive is connected wrongly.
 If the output doesn't contain this text, run `sudo systemctl start umbrel-startup`.
 You should now be able to access the dashboard.
-
-#### What are the SSH username and password?
-The username is `umbrel`, the password is `moneyprintergobrrr`.
 
 #### I want to connect to my node using ...... over my local network, but it doesn't work. How can I fix this?
 If you want to connect to your Umbrel over the local network just replace your onion domain with umbrel.local for any of the connection strings.
