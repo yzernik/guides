@@ -25,19 +25,13 @@ You can find frequent questions not directly related with issues in a separate [
 * What do all the Linux commands do?
 * Where can I get more information?
 
-### Hardware & operating system
-
-#### Can you login using SSH?
+#### Can I login using SSH?
 
 Yes! The username is `umbrel`, the password is `moneyprintergobrrr`.
 
-#### Do you have a compatible Raspberry Pi?
+#### Is my Raspberry Pi compatible?
 
 If you have a Raspberry Pi with at least 4GB of RAM, you can run Umbrel on it.
-
-#### Is you root filesystem read-only?
-
-If you get an error like `unable to ..... : Read-only file system`, this points to a faulty microSD card. If linux detects a corrupt root filesystem, it drops into read-only mode. Try to flash the microSD card again, or use a different card.
 
 #### My Umbrel node keeps crashing. What can I do to fix the issue?
 If you're not using the official power supply, it's probably the power supply.
@@ -71,4 +65,3 @@ If you want to connect to your Umbrel over the local network just replace your o
 I will extend this troubleshooting guide constantly with findings that have been or will be reported in the issues section.
 
 -----
-
