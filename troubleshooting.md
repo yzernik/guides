@@ -25,6 +25,9 @@ You can find frequent questions not directly related with issues in a separate [
 * What do all the Linux commands do?
 * Where can I get more information?
 
+
+### Common problems
+
 #### Can I login using SSH?
 
 Yes! The username is `umbrel`, the password is `moneyprintergobrrr`.
