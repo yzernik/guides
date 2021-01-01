@@ -1,0 +1,10 @@
+#theme: jekyll-theme-minimal
+remote_theme: pmarsceill/just-the-docs
+title: UmbrelInfo
+search_enabled: true
+aux_links:
+    "Contribute! Source on GitHub":
+      - "https://github.com/UmbrelInfo/UmbrelInfo.github.io/"
+
+# enable theme for local usage
+#theme: "just-the-docs"
