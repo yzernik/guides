@@ -101,4 +101,8 @@ Currently not, but the we are working on an application infrastructure, so third
 * Replace `[COUNTRY_CODE]` with the [ISO2 code](https://www.iso.org/obp/ui/#search){:target="_blank"} of your country (eg. `US`)
 * Replace `[WIFI_SSID]` and `[WIFI_PASSWORD]` with the credentials for your own WiFi.
 
+
+## How can I run umbrel in testnet?
+...
+
 ------
